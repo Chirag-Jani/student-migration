@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
-import "contracts/1_DefaultData.sol";
+pragma solidity ^0.8.9;
+import "contracts/DefaultData.sol";
 
 contract ApplicationContract {
     struct Application {
@@ -43,77 +43,9 @@ contract ApplicationContract {
         STUDENT
     }
 
-    DefaultData defaultDataContract;
+    DataContract defaultDataContract;
 
-    constructor(DefaultData defContract) {
+    constructor(DataContract defContract) {
         defaultDataContract = defContract;
-    }
-
-    function getUserInfo(
-        uint256 idx
-    ) public view returns (address userAddress, DefaultData.UserType userType) {
-        return DefaultData(defaultDataContract).getUserInfo(idx);
-    }
-
-    function getUniversityInfo(
-        address uniAddr
-    )
-        public
-        view
-        returns (address addr, string memory uniName, address[] memory colleges)
-    {
-        return DefaultData(defaultDataContract).getUniversityInfo(uniAddr);
-    }
-
-    function getCollegeInfo(
-        address clgAddr
-    )
-        public
-        view
-        returns (
-            address addr,
-            string memory clgName,
-            address uniAddr,
-            address[] memory courses
-        )
-    {
-        return DefaultData(defaultDataContract).getCollegeInfo(clgAddr);
-    }
-
-    function getCourseInfo(
-        address courseAddr
-    )
-        public
-        view
-        returns (
-            address addr,
-            uint256 totalSeats,
-            uint256 availableSeats,
-            DefaultData.Coursetype courseType,
-            address clgAddr,
-            address uniAddr,
-            address[] memory enrolledStudents,
-            address[] memory requestedStudents
-        )
-    {
-        return DefaultData(defaultDataContract).getCourseInfo(courseAddr);
-    }
-
-    function getStudentInfo(
-        address studAddr
-    )
-        public
-        view
-        returns (
-            address addr,
-            string memory name,
-            address courseAddr,
-            address clgAddr,
-            address uniAddr,
-            string memory regNo,
-            string memory batch
-        )
-    {
-        return DefaultData(defaultDataContract).getStudentInfo(studAddr);
     }
 }
