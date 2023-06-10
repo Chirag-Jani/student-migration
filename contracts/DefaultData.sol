@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.20;
 
 contract DataContract {
-    address admin;
+    address public constant admin = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
 
     struct User {
         address addr;
@@ -72,22 +72,21 @@ contract DataContract {
     mapping(address => UserType) public getUserType;
 
     // university => course => => bool => enrolled or requested students
-    mapping(address => mapping(address => mapping(bool => Student[])))
-        public getStudentsUnderUniversity;
+    mapping(address => mapping(address => mapping(bool => address[]))) getStudentsUnderUniversity;
 
     // college => course => bool => enrolled or requested students
-    mapping(address => mapping(address => Student[])) getStudentsUnderCollege;
+    mapping(address => mapping(address => mapping(bool => address[]))) getStudentsUnderCollege;
 
     // university => course => courseExist or not
     mapping(address => mapping(address => bool))
         public courseExistUnderUniversity;
 
     // college => course => courseExist or not
-    mapping(address => mapping(address => bool)) courseExistUnderCollege;
+    mapping(address => mapping(address => bool)) public courseExistUnderCollege;
 
-    constructor() {
-        admin = msg.sender;
-    }
+    // constructor() {
+    //     admin = msg.sender;
+    // }
 
     modifier onlyAdmin() {
         require(msg.sender == admin, "Unauthorized!!");
@@ -101,7 +100,7 @@ contract DataContract {
         address collegeAddress,
         address universityAddress,
         string memory batchNumber
-    ) public onlyAdmin {
+    ) internal {
         // create student struct
         Student memory stud = Student(
             studentAddress,
@@ -124,9 +123,22 @@ contract DataContract {
         // creating user
         User memory user = User(studentAddress, UserType.STUDENT);
 
+        // adding to users list
         users.push(user);
 
+        // adding to mapping
         getUser[studentAddress] = user;
+
+        // adding to usertype mapping
+        getUserType[studentAddress] = UserType.STUDENT;
+
+        // adding under university and college student list of enrolled students
+        getStudentsUnderUniversity[universityAddress][courseAddress][true].push(
+            studentAddress
+        );
+        getStudentsUnderCollege[collegeAddress][courseAddress][true].push(
+            studentAddress
+        );
     }
 
     function addCourse(
@@ -155,6 +167,10 @@ contract DataContract {
 
         // adding to mapping
         getCourse[courseAddress] = course;
+
+        // adding course under college and university
+        courseExistUnderUniversity[universityAddress][courseAddress] = true;
+        courseExistUnderCollege[collegeAddress][courseAddress] = true;
     }
 
     function addCollege(
@@ -185,6 +201,9 @@ contract DataContract {
 
         // adding to mapping
         getUser[collegeAddress] = clg;
+
+        // adding to usertype mapping
+        getUserType[collegeAddress] = UserType.COLLEGE;
     }
 
     function addUniversity(
@@ -208,6 +227,9 @@ contract DataContract {
 
         // adding to mapping
         getUser[universityAddress] = uni;
+
+        // adding to the usertype mapping
+        getUserType[universityAddress] = UserType.UNIVERSITY;
     }
 
     // function to get users
@@ -319,6 +341,15 @@ contract DataContract {
         );
     }
 }
+
+// have to manage mapping to ensure no address is repeated while creating account
+// only manager or parent (college or university) should be able to access data
+// each college and university should be able to access their data only
+// while signup, take msg.sender as the student address
+// check for only authorized addresses and users before calling each function
+// mapping to login, if logged in get the user data (this will be useful while rendering data on frontend)
+// check for sizes and initialization of each variable
+// create necessary events
 
 // Uni A
 // 0xdD870fA1b7C4700F2BD7f44238821C26f7392148
