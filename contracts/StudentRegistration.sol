@@ -122,6 +122,12 @@ contract StudentRegistration is DataContract {
         }
     }
 
+    // login and logout
+    function auth(bool login) public {
+        require(userLoggedIn[msg.sender] == !login);
+        userLoggedIn[msg.sender] = login;
+    }
+
     function getStudentList(
         address courseAddress,
         bool enrolled

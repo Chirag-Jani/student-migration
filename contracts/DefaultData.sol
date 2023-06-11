@@ -8,6 +8,7 @@ contract DataContract {
         address addr; // university address
         string uniName; // university name
         address[] colleges; // addresses of the affiliated colleges
+        bytes32[] applicatoins;
     }
 
     struct College {
@@ -15,6 +16,7 @@ contract DataContract {
         string clgName; // college name
         address uniAddr; // parent university address
         address[] courses; // addresses of the courses
+        bytes32[] applications;
     }
 
     struct Course {
@@ -51,12 +53,43 @@ contract DataContract {
         STUDENT
     }
 
+    struct Application {
+        bytes32 applicationId; // generate randomely
+        address studentAddr;
+        MigrationType migrationType;
+        // from and to types needs to be the same
+        address fromAddr; // could be clg or uni
+        address toAddr; // could be clg or uni
+        address fromCourseAddress;
+        address toCourseAddress;
+        string nocCID;
+        string transferCertiCID;
+        string marksheetCID;
+        string migrationCertiCID;
+        uint256 deadline; // 3 days to report after status is changed tos UNDER_REVIEW_AT_COLLEGE
+        ApplicationStatus status;
+        string notes;
+    }
+
+    enum MigrationType {
+        COLLEGE_TO_COLLEGE_SAME_UNIVERSITY,
+        COLLEGE_TO_COLLEGE_DIFFERENT_UNIVERSITY
+    }
+
+    enum ApplicationStatus {
+        UNDER_REVIEW_AT_UNIVERSITY,
+        UNDER_REVIEW_AT_COLLEGE,
+        APPROVED,
+        REJECTED
+    }
+
     // basic user data structures
     mapping(address => Student) getStudent;
     mapping(address => Course) getCourse;
     mapping(address => College) getCollege;
     mapping(address => University) getUniversity;
     mapping(address => bool) userExist;
+    mapping (address => bool) public userLoggedIn; // to check if user is logged in or not
 
     // __________________________________________________
 
@@ -197,7 +230,8 @@ contract DataContract {
             collegeAddress,
             collegeName,
             universityAddress,
-            new address[](0)
+            new address[](0),
+            new bytes32[](0)
         );
 
         // adding to mapping
@@ -225,7 +259,8 @@ contract DataContract {
         University memory university = University(
             universityAddress,
             universityName,
-            new address[](0)
+            new address[](0),
+            new bytes32[](0)
         );
 
         // adding to mapping
@@ -238,29 +273,31 @@ contract DataContract {
         getUserType[universityAddress] = UserType.UNIVERSITY;
     }
 
-    function getUniversityInfo(
-        address uniAddr
-    )
+    function getUniversityInfo(address uniAddr)
         external
         view
-        returns (address addr, string memory uniName, address[] memory colleges)
+        returns (
+            address addr,
+            string memory uniName,
+            address[] memory colleges,
+            bytes32[] memory applications
+        )
     {
         // only admin can see or one can see of itself
         require(msg.sender == uniAddr || msg.sender == admin, "Access Denied!");
         University memory uni = getUniversity[uniAddr];
-        return (uni.addr, uni.uniName, uni.colleges);
+        return (uni.addr, uni.uniName, uni.colleges, uni.applicatoins);
     }
 
-    function getCollegeInfo(
-        address clgAddr
-    )
+    function getCollegeInfo(address clgAddr)
         external
         view
         returns (
             address addr,
             string memory clgName,
             address uniAddr,
-            address[] memory courses
+            address[] memory courses,
+            bytes32[] memory applications
         )
     {
         College memory clg = getCollege[clgAddr];
@@ -273,12 +310,10 @@ contract DataContract {
             "Access Denied!"
         );
 
-        return (clg.addr, clg.clgName, clg.uniAddr, clg.courses);
+        return (clg.addr, clg.clgName, clg.uniAddr, clg.courses, clg.applications);
     }
 
-    function getCourseInfo(
-        address courseAddr
-    )
+    function getCourseInfo(address courseAddr)
         external
         view
         returns (
@@ -313,9 +348,7 @@ contract DataContract {
         );
     }
 
-    function getStudentInfo(
-        address studAddr
-    )
+    function getStudentInfo(address studAddr)
         external
         view
         returns (
