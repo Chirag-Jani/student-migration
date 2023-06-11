@@ -2,12 +2,7 @@
 pragma solidity ^0.8.20;
 
 contract DataContract {
-    address public constant admin = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
-
-    struct User {
-        address addr;
-        UserType userType;
-    }
+    address admin;
 
     struct University {
         address addr; // university address
@@ -57,19 +52,18 @@ contract DataContract {
     }
 
     // basic user data structures
-    User[] users;
-    mapping(address => User) getUser;
     mapping(address => Student) getStudent;
     mapping(address => Course) getCourse;
     mapping(address => College) getCollege;
     mapping(address => University) getUniversity;
+    mapping(address => bool) userExist;
 
     // __________________________________________________
 
     // other mappings for data access
 
     // to get user type of msg.sender for hierarchy comparision
-    mapping(address => UserType) public getUserType;
+    mapping(address => UserType) getUserType;
 
     // university => course => => bool => enrolled or requested students
     mapping(address => mapping(address => mapping(bool => address[]))) getStudentsUnderUniversity;
@@ -78,27 +72,28 @@ contract DataContract {
     mapping(address => mapping(address => mapping(bool => address[]))) getStudentsUnderCollege;
 
     // university => course => courseExist or not
-    mapping(address => mapping(address => bool))
-        public courseExistUnderUniversity;
+    mapping(address => mapping(address => bool)) courseExistUnderUniversity;
 
     // college => course => courseExist or not
-    mapping(address => mapping(address => bool)) public courseExistUnderCollege;
+    mapping(address => mapping(address => bool)) courseExistUnderCollege;
 
-    // constructor() {
-    //     admin = msg.sender;
-    // }
+    constructor() {
+        admin = msg.sender;
+    }
 
     modifier onlyAdmin() {
         require(msg.sender == admin, "Unauthorized!!");
         _;
     }
 
+    // will be called when approved by college or university
     function addStudent(
         address studentAddress,
         string memory studentName,
         address courseAddress,
         address collegeAddress,
         address universityAddress,
+        string memory studentRegNo,
         string memory batchNumber
     ) internal {
         // create student struct
@@ -108,26 +103,20 @@ contract DataContract {
             courseAddress,
             collegeAddress,
             universityAddress,
-            studentName,
+            studentRegNo,
             batchNumber
         );
 
         // add to mapping
         getStudent[studentAddress] = stud;
 
+        // user exist
+        userExist[studentAddress] = true;
+
         // adding to the course
         Course storage course = getCourse[courseAddress];
         course.enrolledStudents.push(studentAddress);
         course.availableSeats--;
-
-        // creating user
-        User memory user = User(studentAddress, UserType.STUDENT);
-
-        // adding to users list
-        users.push(user);
-
-        // adding to mapping
-        getUser[studentAddress] = user;
 
         // adding to usertype mapping
         getUserType[studentAddress] = UserType.STUDENT;
@@ -141,14 +130,29 @@ contract DataContract {
         );
     }
 
+    // can only be called by admin, college, or university
     function addCourse(
         string memory courseName,
         address courseAddress,
         Coursetype courseType,
         address collegeAddress,
         address universityAddress
-    ) public onlyAdmin {
-        // course 1 college B university A
+    ) public {
+        // checks
+        require(
+            msg.sender == admin ||
+                msg.sender == universityAddress ||
+                msg.sender == collegeAddress,
+            "Unauthorized"
+        );
+
+        // should not repeat the address
+        require(userExist[courseAddress] == false, "Course Exist");
+
+        // course exist
+        userExist[courseAddress] = true;
+
+        // course creation
         Course memory course = Course(
             courseAddress,
             120, // total 120
@@ -157,7 +161,7 @@ contract DataContract {
             courseName,
             collegeAddress,
             universityAddress,
-            new address[](0), // 120 studs can enrol
+            new address[](0), // 120 studs can enroll
             new address[](0) // 120 can request
         );
 
@@ -173,11 +177,21 @@ contract DataContract {
         courseExistUnderCollege[collegeAddress][courseAddress] = true;
     }
 
+    // adding colleges can be done by admin or university only
     function addCollege(
         address collegeAddress,
         string memory collegeName,
         address universityAddress
-    ) public onlyAdmin {
+    ) public {
+        // checks
+        require(
+            msg.sender == admin || msg.sender == universityAddress,
+            "Unauthorized"
+        );
+
+        // should not repeat the address
+        require(userExist[collegeAddress] == false, "User Exist");
+
         // college A university B
         College memory college = College(
             collegeAddress,
@@ -189,27 +203,25 @@ contract DataContract {
         // adding to mapping
         getCollege[collegeAddress] = college;
 
+        // user exist
+        userExist[collegeAddress] = true;
+
         // add college to university
         University storage university = getUniversity[universityAddress];
         university.colleges.push(collegeAddress);
-
-        // user 5
-        User memory clg = User(collegeAddress, UserType.COLLEGE);
-
-        // adding to array
-        users.push(clg);
-
-        // adding to mapping
-        getUser[collegeAddress] = clg;
 
         // adding to usertype mapping
         getUserType[collegeAddress] = UserType.COLLEGE;
     }
 
+    // can only be done by admin
     function addUniversity(
         string memory universityName,
         address universityAddress
     ) public onlyAdmin {
+        // should not repeat the address
+        require(userExist[universityAddress] == false, "User Exist");
+
         University memory university = University(
             universityAddress,
             universityName,
@@ -219,34 +231,21 @@ contract DataContract {
         // adding to mapping
         getUniversity[universityAddress] = university;
 
-        // user 1
-        User memory uni = User(universityAddress, UserType.UNIVERSITY);
-
-        // adding to array
-        users.push(uni);
-
-        // adding to mapping
-        getUser[universityAddress] = uni;
+        // user exist
+        userExist[universityAddress] = true;
 
         // adding to the usertype mapping
         getUserType[universityAddress] = UserType.UNIVERSITY;
     }
 
-    // function to get users
-    function getUserInfo(
-        uint256 idx
-    ) public view onlyAdmin returns (address userAddr, UserType userType) {
-        User memory user = users[idx];
-        return (user.addr, user.userType);
-    }
-
     function getUniversityInfo(
         address uniAddr
     )
-        public
+        external
         view
         returns (address addr, string memory uniName, address[] memory colleges)
     {
+        // only admin can see or one can see of itself
         require(msg.sender == uniAddr || msg.sender == admin, "Access Denied!");
         University memory uni = getUniversity[uniAddr];
         return (uni.addr, uni.uniName, uni.colleges);
@@ -255,7 +254,7 @@ contract DataContract {
     function getCollegeInfo(
         address clgAddr
     )
-        public
+        external
         view
         returns (
             address addr,
@@ -264,16 +263,23 @@ contract DataContract {
             address[] memory courses
         )
     {
-        require(msg.sender == clgAddr || msg.sender == admin, "Access Denied!");
-
         College memory clg = getCollege[clgAddr];
+
+        // itself, or its parent university, or admin can see
+        require(
+            msg.sender == clgAddr ||
+                msg.sender == clg.uniAddr ||
+                msg.sender == admin,
+            "Access Denied!"
+        );
+
         return (clg.addr, clg.clgName, clg.uniAddr, clg.courses);
     }
 
     function getCourseInfo(
         address courseAddr
     )
-        public
+        external
         view
         returns (
             address addr,
@@ -310,7 +316,7 @@ contract DataContract {
     function getStudentInfo(
         address studAddr
     )
-        public
+        external
         view
         returns (
             address addr,
@@ -342,31 +348,14 @@ contract DataContract {
     }
 }
 
-// have to manage mapping to ensure no address is repeated while creating account
-// only manager or parent (college or university) should be able to access data
-// each college and university should be able to access their data only
 // while signup, take msg.sender as the student address
-// check for only authorized addresses and users before calling each function
 // mapping to login, if logged in get the user data (this will be useful while rendering data on frontend)
-// check for sizes and initialization of each variable
 // create necessary events
 
-// Uni A
 // 0xdD870fA1b7C4700F2BD7f44238821C26f7392148
-
-// College A and B of Uni A
-// 0x583031D1113aD414F02576BD6afaBfb302140225
 // 0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB
-
-// Uni B
 // 0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C
-
-// College A and B of Uni B
 // 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c
 // 0x0A098Eda01Ce92ff4A4CCb7A4fFFb5A43EBC70DC
-
-// Student A College A Uni A
 // 0x1aE0EA34a72D944a8C7603FfB3eC30a6669E454C
-
-// Student A College A Uni B
 // 0x03C6FcED478cBbC9a4FAB34eF9f40767739D1Ff7

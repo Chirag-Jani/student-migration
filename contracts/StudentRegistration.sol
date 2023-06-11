@@ -5,13 +5,12 @@ import "contracts/DefaultData.sol";
 contract StudentRegistration is DataContract {
     // student calls this function to signup
     function signup(
-        address studentAddress,
-        string memory studentName,
+        address studentAddress, // will be removed in future and make it msg.sender instead
+        string calldata studentName,
         address courseAddress,
         address collegeAddress,
-        address universityAddress,
-        string memory batchNumber
-    ) public {
+        address universityAddress
+    ) external {
         // college and university addresses should be valid
         require(
             getUserType[collegeAddress] == UserType.COLLEGE &&
@@ -26,6 +25,13 @@ contract StudentRegistration is DataContract {
             "Invalid Course Address"
         );
 
+        // should not repeat the address
+        require(userExist[studentAddress] == false, "User Exist");
+
+        // availibility of seats
+        Course storage course = getCourse[courseAddress];
+        require(course.availableSeats > 0, "Seats Unavailable");
+
         Student memory stud = Student(
             studentAddress,
             studentName,
@@ -33,14 +39,13 @@ contract StudentRegistration is DataContract {
             collegeAddress,
             universityAddress,
             studentName,
-            batchNumber
+            "Not Assigned Yet"
         );
 
         // add to mapping
         getStudent[studentAddress] = stud;
 
         // add to requested Student list of course info
-        Course storage course = getCourse[courseAddress];
         course.requestedStudents.push(studentAddress);
 
         // add to requested students under college and university both
@@ -51,26 +56,23 @@ contract StudentRegistration is DataContract {
             .push(studentAddress);
     }
 
-    function approve(address courseAddress, address studentAddress) public {
-        // msg.sender type should be college or university
-        require(
-            getUserType[msg.sender] == UserType.UNIVERSITY ||
-                getUserType[msg.sender] == UserType.COLLEGE,
-            "Unauthorized to approve"
-        );
+    function approve(
+        address courseAddress,
+        address studentAddress,
+        string calldata assignedRegNo,
+        string calldata assignedBatchNo
+    ) external {
+        // should not repeat the address
+        require(userExist[studentAddress] == false, "User Exist");
 
         // get the student instance
         Student memory stud = getStudent[studentAddress];
 
-        // college or university should match with the one who is calling the approve address
+        // only parent university or college can approve
         require(
-            stud.clgAddr == msg.sender || stud.uniAddr == msg.sender,
-            "Unauthorized"
+            msg.sender == stud.uniAddr || msg.sender == stud.clgAddr,
+            "Unauthorized to approve"
         );
-
-        // check for available seats under given course
-        Course memory course = getCourse[courseAddress];
-        require(course.availableSeats > 0, "Seats Unavailable");
 
         // call the addStudent function
         addStudent(
@@ -79,17 +81,51 @@ contract StudentRegistration is DataContract {
             courseAddress,
             stud.clgAddr,
             stud.uniAddr,
-            stud.batch
+            assignedRegNo,
+            assignedBatchNo
         );
 
-        // remove from requested user
-        // remove from requested students
+        // remove from getStudentUnder college and university (from requested) bool = false
+        address[] storage collegeRequested = getStudentsUnderCollege[
+            stud.clgAddr
+        ][courseAddress][false];
+        uint256 clR = collegeRequested.length;
+        for (uint256 i = 0; i < clR; i++) {
+            if (collegeRequested[i] == studentAddress) {
+                collegeRequested[i] = collegeRequested[clR - 1];
+                collegeRequested.pop();
+                break;
+            }
+        }
+
+        address[] storage uniRequested = getStudentsUnderUniversity[
+            stud.uniAddr
+        ][courseAddress][false];
+        uint256 uniR = uniRequested.length;
+        for (uint256 i = 0; i < uniR; i++) {
+            if (uniRequested[i] == studentAddress) {
+                uniRequested[i] = uniRequested[uniR - 1];
+                uniRequested.pop();
+                break;
+            }
+        }
+
+        // remove from requested students under the course
+        Course storage course = getCourse[courseAddress];
+        uint256 len = course.requestedStudents.length;
+        for (uint256 i = 0; i < len; i++) {
+            if (course.requestedStudents[i] == studentAddress) {
+                course.requestedStudents[i] = course.requestedStudents[len - 1];
+                course.requestedStudents.pop();
+                break;
+            }
+        }
     }
 
     function getStudentList(
         address courseAddress,
         bool enrolled
-    ) public view returns (address[] memory studetntList) {
+    ) external view returns (address[] memory studetntList) {
         UserType userType = getUserType[msg.sender];
 
         if (userType == UserType.UNIVERSITY) {
