@@ -141,7 +141,7 @@ contract ApplicationContract is StudentRegistration {
                             fromCourse.enrolledStudents.length - 1
                         ];
                     fromCourse.enrolledStudents.pop();
-                    return;
+                    break;
                 }
             }
 
@@ -159,7 +159,7 @@ contract ApplicationContract is StudentRegistration {
                 if (studUndUni[i] == application.studentAddr) {
                     studUndUni[i] = studUndUni[studUndUni.length - 1];
                     studUndUni.pop();
-                    return;
+                    break;
                 }
             }
             getStudentsUnderUniversity[fromCourse.uniAddr][fromCourse.addr][
@@ -170,7 +170,7 @@ contract ApplicationContract is StudentRegistration {
                 if (studUndCol[i] == application.studentAddr) {
                     studUndCol[i] = studUndCol[studUndCol.length - 1];
                     studUndCol.pop();
-                    return;
+                    break;
                 }
             }
             getStudentsUnderCollege[fromCourse.clgAddr][fromCourse.addr][
@@ -192,7 +192,7 @@ contract ApplicationContract is StudentRegistration {
                     toClg.applications.length - 1
                 ];
                 toClg.applications.pop();
-                return;
+                break;
             }
         }
     }
@@ -210,5 +210,5 @@ contract ApplicationContract is StudentRegistration {
 // 0x03C6FcED478cBbC9a4FAB34eF9f40767739D1Ff7
 
 // available seats not incremented
-// deny application
 // remove from under uni and under college
+// deny application
