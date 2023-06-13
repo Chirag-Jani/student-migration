@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.9;
 import "contracts/DefaultData.sol";
 
 contract StudentRegistration is DataContract {
@@ -38,7 +38,7 @@ contract StudentRegistration is DataContract {
             courseAddress,
             collegeAddress,
             universityAddress,
-            studentName,
+            "Not Assigned Yet",
             "Not Assigned Yet"
         );
 
@@ -128,10 +128,11 @@ contract StudentRegistration is DataContract {
         userLoggedIn[msg.sender] = login;
     }
 
-    function getStudentList(
-        address courseAddress,
-        bool enrolled
-    ) external view returns (address[] memory studetntList) {
+    function getStudentList(address courseAddress, bool enrolled)
+        external
+        view
+        returns (address[] memory studetntList)
+    {
         UserType userType = getUserType[msg.sender];
 
         if (userType == UserType.UNIVERSITY) {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.9;
 
 contract DataContract {
     address admin;
@@ -8,7 +8,7 @@ contract DataContract {
         address addr; // university address
         string uniName; // university name
         address[] colleges; // addresses of the affiliated colleges
-        bytes32[] applicatoins;
+        bytes32[] applications;
     }
 
     struct College {
@@ -89,7 +89,7 @@ contract DataContract {
     mapping(address => College) getCollege;
     mapping(address => University) getUniversity;
     mapping(address => bool) userExist;
-    mapping (address => bool) public userLoggedIn; // to check if user is logged in or not
+    mapping(address => bool) public userLoggedIn; // to check if user is logged in or not
 
     // __________________________________________________
 
@@ -286,7 +286,7 @@ contract DataContract {
         // only admin can see or one can see of itself
         require(msg.sender == uniAddr || msg.sender == admin, "Access Denied!");
         University memory uni = getUniversity[uniAddr];
-        return (uni.addr, uni.uniName, uni.colleges, uni.applicatoins);
+        return (uni.addr, uni.uniName, uni.colleges, uni.applications);
     }
 
     function getCollegeInfo(address clgAddr)
@@ -310,7 +310,13 @@ contract DataContract {
             "Access Denied!"
         );
 
-        return (clg.addr, clg.clgName, clg.uniAddr, clg.courses, clg.applications);
+        return (
+            clg.addr,
+            clg.clgName,
+            clg.uniAddr,
+            clg.courses,
+            clg.applications
+        );
     }
 
     function getCourseInfo(address courseAddr)
@@ -381,14 +387,3 @@ contract DataContract {
     }
 }
 
-// while signup, take msg.sender as the student address
-// mapping to login, if logged in get the user data (this will be useful while rendering data on frontend)
-// create necessary events
-
-// 0xdD870fA1b7C4700F2BD7f44238821C26f7392148
-// 0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB
-// 0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C
-// 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c
-// 0x0A098Eda01Ce92ff4A4CCb7A4fFFb5A43EBC70DC
-// 0x1aE0EA34a72D944a8C7603FfB3eC30a6669E454C
-// 0x03C6FcED478cBbC9a4FAB34eF9f40767739D1Ff7

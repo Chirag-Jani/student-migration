@@ -4,7 +4,7 @@ import "contracts/StudentRegistration.sol";
 
 contract ApplicationContract is StudentRegistration {
     // mapping to get application from id
-    mapping(bytes32 => Application) getApplication;
+    mapping(bytes32 => Application) public getApplication;
 
     // initiate transfer
     function initiateTransfer(
@@ -19,7 +19,7 @@ contract ApplicationContract is StudentRegistration {
         string memory migrationCerti
     ) public {
         // get college
-        College storage toCollege = getCollege[to];
+        University storage toUniversity = getUniversity[getCollege[to].uniAddr];
 
         require(
             getCourse[fromCourse].courseType == getCourse[toCourse].courseType,
@@ -59,7 +59,7 @@ contract ApplicationContract is StudentRegistration {
         );
 
         // adding to array and mapping
-        toCollege.applications.push(_applicationId);
+        toUniversity.applications.push(_applicationId);
         getApplication[_applicationId] = appli;
 
         // only student typs of member can initiate
@@ -75,7 +75,7 @@ contract ApplicationContract is StudentRegistration {
 
     // review at uni
     function transferTransferToCollege(bytes32 applicationId) public {
-        // get list of all requests (for own only)
+        // get list of all requests (for own only) (handled in getUniversity data and frontend. So, no need of require)
         // select req
         Application storage application = getApplication[applicationId];
 
@@ -84,17 +84,131 @@ contract ApplicationContract is StudentRegistration {
 
         // move to college
         College storage college = getCollege[application.toAddr];
+        college.applications.push(applicationId);
         application.status = ApplicationStatus.UNDER_REVIEW_AT_COLLEGE;
+        application.notes = "Moved to College";
 
         // remove from university
+        University storage collegeUni = getUniversity[college.uniAddr];
+
+        for (uint256 i = 0; i < collegeUni.applications.length; i++) {
+            if (collegeUni.applications[i] == applicationId) {
+                collegeUni.applications[i] = collegeUni.applications[
+                    collegeUni.applications.length - 1
+                ];
+                collegeUni.applications.pop();
+                return;
+            }
+        }
     }
 
     // approve or reject at college
-    function approveOrRejectApplication(bytes32 applicationId) public {
+    function approveOrRejectApplication(
+        bytes32 applicationId,
+        bool approve,
+        string memory assignedRegNo,
+        string memory assignedBatchNo
+    ) public {
         // get appli
-        // change to approve
-        // add student (directly call the function)
-        // remove from the "From" college and university
-        // change to reject
+        Application storage application = getApplication[applicationId];
+
+        if (approve == true) {
+            Course memory toCourse = getCourse[application.toCourseAddress];
+
+            // change to approve
+            application.status = ApplicationStatus.APPROVED;
+            application.notes = "Congratulations!!";
+
+            // add student (directly call the function)
+            addStudent(
+                application.studentAddr,
+                getStudent[application.studentAddr].name,
+                toCourse.addr,
+                toCourse.clgAddr,
+                toCourse.uniAddr,
+                assignedRegNo,
+                assignedBatchNo
+            );
+
+            // remove student from the "from course and college and university"
+            Course storage fromCourse = getCourse[
+                application.fromCourseAddress
+            ];
+            for (uint256 i = 0; i < fromCourse.enrolledStudents.length; i++) {
+                if (fromCourse.enrolledStudents[i] == application.studentAddr) {
+                    fromCourse.enrolledStudents[i] = fromCourse
+                        .enrolledStudents[
+                            fromCourse.enrolledStudents.length - 1
+                        ];
+                    fromCourse.enrolledStudents.pop();
+                    return;
+                }
+            }
+
+            fromCourse.availableSeats += 1;
+
+            // removing from under university and college student list of enrolled students
+            address[] storage studUndUni = getStudentsUnderUniversity[
+                fromCourse.uniAddr
+            ][fromCourse.addr][true];
+            address[] storage studUndCol = getStudentsUnderCollege[
+                fromCourse.clgAddr
+            ][fromCourse.addr][true];
+
+            for (uint256 i = 0; i < studUndUni.length; i++) {
+                if (studUndUni[i] == application.studentAddr) {
+                    studUndUni[i] = studUndUni[studUndUni.length - 1];
+                    studUndUni.pop();
+                    return;
+                }
+            }
+            getStudentsUnderUniversity[fromCourse.uniAddr][fromCourse.addr][
+                true
+            ] = studUndUni;
+
+            for (uint256 i = 0; i < studUndCol.length; i++) {
+                if (studUndCol[i] == application.studentAddr) {
+                    studUndCol[i] = studUndCol[studUndCol.length - 1];
+                    studUndCol.pop();
+                    return;
+                }
+            }
+            getStudentsUnderCollege[fromCourse.clgAddr][fromCourse.addr][
+                true
+            ] = studUndCol;
+            
+        } else {
+            // change to reject
+            application.status = ApplicationStatus.REJECTED;
+            application.notes = "Not Accepted!!";
+        }
+
+        // remove from the "to" college and university
+        College storage toClg = getCollege[application.toAddr];
+
+        for (uint256 i = 0; i < toClg.applications.length; i++) {
+            if (toClg.applications[i] == applicationId) {
+                toClg.applications[i] = toClg.applications[
+                    toClg.applications.length - 1
+                ];
+                toClg.applications.pop();
+                return;
+            }
+        }
     }
 }
+
+// while signup, take msg.sender as the student address
+// create necessary events
+
+// 0xdD870fA1b7C4700F2BD7f44238821C26f7392148 -
+// 0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB
+// 0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C
+// 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c -
+// 0x0A098Eda01Ce92ff4A4CCb7A4fFFb5A43EBC70DC
+// 0x1aE0EA34a72D944a8C7603FfB3eC30a6669E454C
+// 0x03C6FcED478cBbC9a4FAB34eF9f40767739D1Ff7
+
+// available seats not incremented
+// deny application
+// remove from under uni and under college
