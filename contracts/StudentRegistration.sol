@@ -54,6 +54,7 @@ contract StudentRegistration is DataContract {
 
         // these are needed to fetch the list of students (requested and enrolled)
         // add to requested students under college and university both
+        // currently commenting out this, and will try to fetch data from frontend (uni->clg->cour->data)
         getStudentsUnderCollege[collegeAddress][courseAddress][false].push(
             msg.sender
         );

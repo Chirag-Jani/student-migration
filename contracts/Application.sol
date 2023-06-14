@@ -63,6 +63,9 @@ contract ApplicationContract is StudentRegistration {
         toUniversity.applications.push(_applicationId);
         getApplication[_applicationId] = appli;
 
+        Student storage stud = getStudent[msg.sender];
+        stud.migrationApplications.push(_applicationId);
+
         return _applicationId;
     }
 
