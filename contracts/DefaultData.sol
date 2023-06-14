@@ -39,6 +39,7 @@ contract DataContract {
         address uniAddr; // university address
         string regNo; // registration number
         string batch; // batch id
+        bytes32[] migrationApplications;
     }
 
     enum Coursetype {
@@ -137,7 +138,8 @@ contract DataContract {
             collegeAddress,
             universityAddress,
             studentRegNo,
-            batchNumber
+            batchNumber,
+            new bytes32[](0)
         );
 
         // add to mapping
@@ -364,7 +366,8 @@ contract DataContract {
             address clgAddr,
             address uniAddr,
             string memory regNo,
-            string memory batch
+            string memory batch,
+            bytes32[] memory migrationApplications
         )
     {
         Student memory stud = getStudent[studAddr];
@@ -382,7 +385,8 @@ contract DataContract {
             stud.clgAddr,
             stud.uniAddr,
             stud.regNo,
-            stud.batch
+            stud.batch,
+            stud.migrationApplications
         );
     }
 }

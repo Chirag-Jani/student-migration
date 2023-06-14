@@ -5,7 +5,7 @@ import "contracts/DefaultData.sol";
 contract StudentRegistration is DataContract {
     // student calls this function to signup
     function signup(
-        address studentAddress, // will be removed in future and make it msg.sender instead
+        // address studentAddress, // will be removed in future and make it msg.sender instead
         string calldata studentName,
         address courseAddress,
         address collegeAddress,
@@ -26,14 +26,14 @@ contract StudentRegistration is DataContract {
         );
 
         // should not repeat the address
-        require(userExist[studentAddress] == false, "User Exist");
+        require(userExist[msg.sender] == false, "User Exist");
 
         // availibility of seats
         Course storage course = getCourse[courseAddress];
         require(course.availableSeats > 0, "Seats Unavailable");
 
         Student memory stud = Student(
-            studentAddress,
+            msg.sender,
             studentName,
             courseAddress,
             collegeAddress,
@@ -43,17 +43,17 @@ contract StudentRegistration is DataContract {
         );
 
         // add to mapping
-        getStudent[studentAddress] = stud;
+        getStudent[msg.sender] = stud;
 
         // add to requested Student list of course info
-        course.requestedStudents.push(studentAddress);
+        course.requestedStudents.push(msg.sender);
 
         // add to requested students under college and university both
         getStudentsUnderCollege[collegeAddress][courseAddress][false].push(
-            studentAddress
+            msg.sender
         );
         getStudentsUnderUniversity[universityAddress][courseAddress][false]
-            .push(studentAddress);
+            .push(msg.sender);
     }
 
     function approve(

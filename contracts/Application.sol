@@ -74,7 +74,7 @@ contract ApplicationContract is StudentRegistration {
     }
 
     // review at uni
-    function transferTransferToCollege(bytes32 applicationId) public {
+    function transferApplicationToCollege(bytes32 applicationId) public {
         // get list of all requests (for own only) (handled in getUniversity data and frontend. So, no need of require)
         // select req
         Application storage application = getApplication[applicationId];
@@ -198,17 +198,3 @@ contract ApplicationContract is StudentRegistration {
     }
 }
 
-// while signup, take msg.sender as the student address
-// create necessary events
-
-// 0xdD870fA1b7C4700F2BD7f44238821C26f7392148 -
-// 0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB
-// 0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C
-// 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c -
-// 0x0A098Eda01Ce92ff4A4CCb7A4fFFb5A43EBC70DC
-// 0x1aE0EA34a72D944a8C7603FfB3eC30a6669E454C
-// 0x03C6FcED478cBbC9a4FAB34eF9f40767739D1Ff7
-
-// available seats not incremented
-// remove from under uni and under college
-// deny application
