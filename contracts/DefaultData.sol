@@ -58,9 +58,9 @@ contract DataContract {
         bytes32 applicationId; // generate randomely
         address studentAddr;
         MigrationType migrationType;
-        // from and to types needs to be the same
-        address fromAddr; // could be clg or uni
-        address toAddr; // could be clg or uni
+        // fromCourseAddress and toCourseAddress types needs to be the same
+        address fromAddr;
+        address toAddr;
         address fromCourseAddress;
         address toCourseAddress;
         string nocCID;
@@ -85,11 +85,11 @@ contract DataContract {
     }
 
     // basic user data structures
-    mapping(address => Student) getStudent;
-    mapping(address => Course) getCourse;
-    mapping(address => College) getCollege;
-    mapping(address => University) getUniversity;
-    mapping(address => bool) userExist;
+    mapping(address => Student) public getStudent;
+    mapping(address => Course) public getCourse;
+    mapping(address => College) public getCollege;
+    mapping(address => University) public getUniversity;
+    mapping(address => bool) userExist; // internal call
     mapping(address => bool) public userLoggedIn; // to check if user is logged in or not
 
     // __________________________________________________
@@ -97,7 +97,7 @@ contract DataContract {
     // other mappings for data access
 
     // to get user type of msg.sender for hierarchy comparision
-    mapping(address => UserType) getUserType;
+    mapping(address => UserType) getUserType; // internal call
 
     // university => course => => bool => enrolled or requested students
     mapping(address => mapping(address => mapping(bool => address[]))) getStudentsUnderUniversity;
@@ -105,11 +105,14 @@ contract DataContract {
     // college => course => bool => enrolled or requested students
     mapping(address => mapping(address => mapping(bool => address[]))) getStudentsUnderCollege;
 
-    // university => course => courseExist or not
-    mapping(address => mapping(address => bool)) courseExistUnderUniversity;
 
-    // college => course => courseExist or not
-    mapping(address => mapping(address => bool)) courseExistUnderCollege;
+    // courseExistUnderUniversity & courseExistUnderCollege are not needed, I will handle it from frontend
+
+    // university => course => courseExist or not
+    // mapping(address => mapping(address => bool)) courseExistUnderUniversity;
+
+    // // college => course => courseExist or not
+    // mapping(address => mapping(address => bool)) courseExistUnderCollege;
 
     constructor() {
         admin = msg.sender;
@@ -171,15 +174,16 @@ contract DataContract {
         address courseAddress,
         Coursetype courseType,
         address collegeAddress,
-        address universityAddress
+        address universityAddress,
+        uint seats
     ) public {
-        // checks
-        require(
-            msg.sender == admin ||
-                msg.sender == universityAddress ||
-                msg.sender == collegeAddress,
-            "Unauthorized"
-        );
+        // checks not needed, will handle from frontend
+        // require(
+        //     msg.sender == admin ||
+        //         msg.sender == universityAddress ||
+        //         msg.sender == collegeAddress,
+        //     "Unauthorized"
+        // );
 
         // should not repeat the address
         require(userExist[courseAddress] == false, "Course Exist");
@@ -190,8 +194,8 @@ contract DataContract {
         // course creation
         Course memory course = Course(
             courseAddress,
-            120, // total 120
-            120, // available 120
+            seats, // total 
+            seats, // available 
             courseType,
             courseName,
             collegeAddress,
@@ -208,8 +212,8 @@ contract DataContract {
         getCourse[courseAddress] = course;
 
         // adding course under college and university
-        courseExistUnderUniversity[universityAddress][courseAddress] = true;
-        courseExistUnderCollege[collegeAddress][courseAddress] = true;
+        // courseExistUnderUniversity[universityAddress][courseAddress] = true;
+        // courseExistUnderCollege[collegeAddress][courseAddress] = true;
     }
 
     // adding colleges can be done by admin or university only
@@ -218,11 +222,11 @@ contract DataContract {
         string memory collegeName,
         address universityAddress
     ) public {
-        // checks
-        require(
-            msg.sender == admin || msg.sender == universityAddress,
-            "Unauthorized"
-        );
+        // checks not needed, will handle from frontend
+        // require(
+        //     msg.sender == admin || msg.sender == universityAddress,
+        //     "Unauthorized"
+        // );
 
         // should not repeat the address
         require(userExist[collegeAddress] == false, "User Exist");
@@ -254,7 +258,8 @@ contract DataContract {
     function addUniversity(
         string memory universityName,
         address universityAddress
-    ) public onlyAdmin {
+    ) public onlyAdmin // onlyAdmin is needed 
+     {
         // should not repeat the address
         require(userExist[universityAddress] == false, "User Exist");
 
@@ -275,119 +280,120 @@ contract DataContract {
         getUserType[universityAddress] = UserType.UNIVERSITY;
     }
 
-    function getUniversityInfo(address uniAddr)
-        external
-        view
-        returns (
-            address addr,
-            string memory uniName,
-            address[] memory colleges,
-            bytes32[] memory applications
-        )
-    {
-        // only admin can see or one can see of itself
-        require(msg.sender == uniAddr || msg.sender == admin, "Access Denied!");
-        University memory uni = getUniversity[uniAddr];
-        return (uni.addr, uni.uniName, uni.colleges, uni.applications);
-    }
+    // these functions are not needed, will be handled from frontend
 
-    function getCollegeInfo(address clgAddr)
-        external
-        view
-        returns (
-            address addr,
-            string memory clgName,
-            address uniAddr,
-            address[] memory courses,
-            bytes32[] memory applications
-        )
-    {
-        College memory clg = getCollege[clgAddr];
+    // function getUniversityInfo(address uniAddr)
+    //     external
+    //     view
+    //     returns (
+    //         address addr,
+    //         string memory uniName,
+    //         address[] memory colleges,
+    //         bytes32[] memory applications
+    //     )
+    // {
+    //     // anyone can access the data (who calls it, will be handled in frontend)
+    //     University memory uni = getUniversity[uniAddr];
+    //     return (uni.addr, uni.uniName, uni.colleges, uni.applications);
+    // }
 
-        // itself, or its parent university, or admin can see
-        require(
-            msg.sender == clgAddr ||
-                msg.sender == clg.uniAddr ||
-                msg.sender == admin,
-            "Access Denied!"
-        );
+    // function getCollegeInfo(address clgAddr)
+    //     external
+    //     view
+    //     returns (
+    //         address addr,
+    //         string memory clgName,
+    //         address uniAddr,
+    //         address[] memory courses,
+    //         bytes32[] memory applications
+    //     )
+    // {
+    //     College memory clg = getCollege[clgAddr];
 
-        return (
-            clg.addr,
-            clg.clgName,
-            clg.uniAddr,
-            clg.courses,
-            clg.applications
-        );
-    }
+    //     // itself, or its parent university, or admin can see
+    //     require(
+    //         msg.sender == clgAddr ||
+    //             msg.sender == clg.uniAddr ||
+    //             msg.sender == admin,
+    //         "Access Denied!"
+    //     );
 
-    function getCourseInfo(address courseAddr)
-        external
-        view
-        returns (
-            address addr,
-            uint256 totalSeats,
-            uint256 availableSeats,
-            Coursetype courseType,
-            string memory courseName,
-            address clgAddr,
-            address uniAddr,
-            address[] memory enrolledStudents,
-            address[] memory requestedStudents
-        )
-    {
-        Course memory cour = getCourse[courseAddr];
-        require(
-            msg.sender == cour.clgAddr ||
-                msg.sender == cour.uniAddr ||
-                msg.sender == admin,
-            "Access Denied!"
-        );
-        return (
-            cour.addr,
-            cour.totalSeats,
-            cour.availableSeats,
-            cour.courseType,
-            cour.courseName,
-            cour.clgAddr,
-            cour.uniAddr,
-            cour.enrolledStudents,
-            cour.requestedStudents
-        );
-    }
+    //     return (
+    //         clg.addr,
+    //         clg.clgName,
+    //         clg.uniAddr,
+    //         clg.courses,
+    //         clg.applications
+    //     );
+    // }
 
-    function getStudentInfo(address studAddr)
-        external
-        view
-        returns (
-            address addr,
-            string memory name,
-            address courseAddr,
-            address clgAddr,
-            address uniAddr,
-            string memory regNo,
-            string memory batch,
-            bytes32[] memory migrationApplications
-        )
-    {
-        Student memory stud = getStudent[studAddr];
-        require(
-            msg.sender == studAddr ||
-                msg.sender == stud.clgAddr ||
-                msg.sender == stud.uniAddr ||
-                msg.sender == admin,
-            "Access Denied!"
-        );
-        return (
-            stud.addr,
-            stud.name,
-            stud.courseAddr,
-            stud.clgAddr,
-            stud.uniAddr,
-            stud.regNo,
-            stud.batch,
-            stud.migrationApplications
-        );
-    }
+    // function getCourseInfo(address courseAddr)
+    //     external
+    //     view
+    //     returns (
+    //         address addr,
+    //         uint256 totalSeats,
+    //         uint256 availableSeats,
+    //         Coursetype courseType,
+    //         string memory courseName,
+    //         address clgAddr,
+    //         address uniAddr,
+    //         address[] memory enrolledStudents,
+    //         address[] memory requestedStudents
+    //     )
+    // {
+    //     Course memory cour = getCourse[courseAddr];
+    //     require(
+    //         msg.sender == cour.clgAddr ||
+    //             msg.sender == cour.uniAddr ||
+    //             msg.sender == admin,
+    //         "Access Denied!"
+    //     );
+    //     return (
+    //         cour.addr,
+    //         cour.totalSeats,
+    //         cour.availableSeats,
+    //         cour.courseType,
+    //         cour.courseName,
+    //         cour.clgAddr,
+    //         cour.uniAddr,
+    //         cour.enrolledStudents,
+    //         cour.requestedStudents
+    //     );
+    // }
+
+    // function getStudentInfo(address studAddr)
+    //     external
+    //     view
+    //     returns (
+    //         address addr,
+    //         string memory name,
+    //         address courseAddr,
+    //         address clgAddr,
+    //         address uniAddr,
+    //         string memory regNo,
+    //         string memory batch,
+    //         bytes32[] memory migrationApplications
+    //     )
+    // {
+    //     Student memory stud = getStudent[studAddr];
+    //     require(
+    //         msg.sender == studAddr ||
+    //             msg.sender == stud.clgAddr ||
+    //             msg.sender == stud.uniAddr ||
+    //             msg.sender == admin,
+    //         "Access Denied!"
+    //     );
+    //     return (
+    //         stud.addr,
+    //         stud.name,
+    //         stud.courseAddr,
+    //         stud.clgAddr,
+    //         stud.uniAddr,
+    //         stud.regNo,
+    //         stud.batch,
+    //         stud.migrationApplications
+    //     );
+    // }
 }
 

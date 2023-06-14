@@ -17,14 +17,15 @@ contract ApplicationContract is StudentRegistration {
         string memory transferCerti,
         string memory marksheet,
         string memory migrationCerti
-    ) public {
+    ) public returns (bytes32 applicationId){
         // get college
         University storage toUniversity = getUniversity[getCollege[to].uniAddr];
 
-        require(
-            getCourse[fromCourse].courseType == getCourse[toCourse].courseType,
-            "Course type mismatched"
-        );
+        // not needed (handle from frontend)
+        // require(
+        //     getCourse[fromCourse].courseType == getCourse[toCourse].courseType,
+        //     "Course type mismatched"
+        // );
 
         // creating application id
         bytes32 _applicationId = keccak256(
@@ -62,15 +63,7 @@ contract ApplicationContract is StudentRegistration {
         toUniversity.applications.push(_applicationId);
         getApplication[_applicationId] = appli;
 
-        // only student typs of member can initiate
-        // show current uni, coll, course, reg no
-        // transfer type (col to col same, col to col diff)
-        // select uni
-        // select col
-        // select cour (only same CourseType)
-        // get available seats
-        // upload docs (Marksheet, NOC, Transfer, Migration certi)
-        // done (Under review at uni)
+        return _applicationId;
     }
 
     // review at uni
@@ -86,7 +79,7 @@ contract ApplicationContract is StudentRegistration {
         College storage college = getCollege[application.toAddr];
         college.applications.push(applicationId);
         application.status = ApplicationStatus.UNDER_REVIEW_AT_COLLEGE;
-        application.notes = "Moved to College";
+        application.notes = "Report to college within 3 business days";
 
         // remove from university
         University storage collegeUni = getUniversity[college.uniAddr];

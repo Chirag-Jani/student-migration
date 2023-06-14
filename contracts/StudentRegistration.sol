@@ -11,26 +11,29 @@ contract StudentRegistration is DataContract {
         address collegeAddress,
         address universityAddress
     ) external {
-        // college and university addresses should be valid
-        require(
-            getUserType[collegeAddress] == UserType.COLLEGE &&
-                getUserType[universityAddress] == UserType.UNIVERSITY,
-            "Invalid College or University Address"
-        );
+        // these checks are not needed, will handle from frontend
 
-        // course shoudld exist under college and university
-        require(
-            courseExistUnderCollege[collegeAddress][courseAddress] &&
-                courseExistUnderUniversity[universityAddress][courseAddress],
-            "Invalid Course Address"
-        );
+        // // college and university addresses should be valid
+        // require(
+        //     getUserType[collegeAddress] == UserType.COLLEGE &&
+        //         getUserType[universityAddress] == UserType.UNIVERSITY,
+        //     "Invalid College or University Address"
+        // );
+
+        // // course shoudld exist under college and university
+        // require(
+        //     courseExistUnderCollege[collegeAddress][courseAddress] &&
+        //         courseExistUnderUniversity[universityAddress][courseAddress],
+        //     "Invalid Course Address"
+        // );
 
         // should not repeat the address
         require(userExist[msg.sender] == false, "User Exist");
 
-        // availibility of seats
         Course storage course = getCourse[courseAddress];
-        require(course.availableSeats > 0, "Seats Unavailable");
+
+        // availibility of seats - no check needed (handle from frontend)
+        // require(course.availableSeats > 0, "Seats Unavailable");
 
         Student memory stud = Student(
             msg.sender,
@@ -39,7 +42,8 @@ contract StudentRegistration is DataContract {
             collegeAddress,
             universityAddress,
             "Not Assigned Yet",
-            "Not Assigned Yet"
+            "Not Assigned Yet",
+            new bytes32[](0)
         );
 
         // add to mapping
@@ -48,6 +52,7 @@ contract StudentRegistration is DataContract {
         // add to requested Student list of course info
         course.requestedStudents.push(msg.sender);
 
+        // these are needed to fetch the list of students (requested and enrolled)
         // add to requested students under college and university both
         getStudentsUnderCollege[collegeAddress][courseAddress][false].push(
             msg.sender
@@ -68,11 +73,11 @@ contract StudentRegistration is DataContract {
         // get the student instance
         Student memory stud = getStudent[studentAddress];
 
-        // only parent university or college can approve
-        require(
-            msg.sender == stud.uniAddr || msg.sender == stud.clgAddr,
-            "Unauthorized to approve"
-        );
+        // only parent university or college can approve - handle from frontend
+        // require(
+        //     msg.sender == stud.uniAddr || msg.sender == stud.clgAddr,
+        //     "Unauthorized to approve"
+        // );
 
         // call the addStudent function
         addStudent(
@@ -128,6 +133,7 @@ contract StudentRegistration is DataContract {
         userLoggedIn[msg.sender] = login;
     }
 
+    // needed (to get requested and enrolled students)
     function getStudentList(address courseAddress, bool enrolled)
         external
         view
@@ -136,10 +142,10 @@ contract StudentRegistration is DataContract {
         UserType userType = getUserType[msg.sender];
 
         if (userType == UserType.UNIVERSITY) {
-            require(
-                courseExistUnderUniversity[msg.sender][courseAddress] == true,
-                "No Data Found"
-            );
+            // require(
+            //     courseExistUnderUniversity[msg.sender][courseAddress] == true,
+            //     "No Data Found"
+            // );
 
             if (enrolled == true) {
                 return
@@ -152,10 +158,10 @@ contract StudentRegistration is DataContract {
             }
         }
         if (userType == DataContract.UserType.COLLEGE) {
-            require(
-                courseExistUnderCollege[msg.sender][courseAddress] == true,
-                "No Data Found"
-            );
+            // require(
+            //     courseExistUnderCollege[msg.sender][courseAddress] == true,
+            //     "No Data Found"
+            // );
 
             if (enrolled == true) {
                 return getStudentsUnderCollege[msg.sender][courseAddress][true];

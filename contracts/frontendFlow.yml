@@ -1,4 +1,7 @@
 
+- implement deadline thing first (discuss)
+- need array of university list (to fetch for the first time while signup)
+
 - need two endpoints:
     - one for normal user login (uni, clg, stud)
     - one for admin
