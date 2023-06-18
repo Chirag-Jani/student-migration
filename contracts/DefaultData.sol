@@ -287,7 +287,9 @@ contract DataContract {
 
     // these functions are not needed, will be handled from frontend
 
-    function getUniversityInfo(address uniAddr)
+    function getUniversityInfo(
+        address uniAddr
+    )
         external
         view
         returns (
@@ -302,7 +304,9 @@ contract DataContract {
         return (uni.addr, uni.uniName, uni.colleges, uni.applications);
     }
 
-    function getCollegeInfo(address clgAddr)
+    function getCollegeInfo(
+        address clgAddr
+    )
         external
         view
         returns (
@@ -332,7 +336,9 @@ contract DataContract {
         );
     }
 
-    function getCourseInfo(address courseAddr)
+    function getCourseInfo(
+        address courseAddr
+    )
         external
         view
         returns (
@@ -367,7 +373,9 @@ contract DataContract {
         );
     }
 
-    function getStudentInfo(address studAddr)
+    function getStudentInfo(
+        address studAddr
+    )
         external
         view
         returns (

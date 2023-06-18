@@ -135,11 +135,10 @@ contract StudentRegistration is DataContract {
     }
 
     // needed (to get requested and enrolled students)
-    function getStudentList(address courseAddress, bool enrolled)
-        external
-        view
-        returns (address[] memory studetntList)
-    {
+    function getStudentList(
+        address courseAddress,
+        bool enrolled
+    ) external view returns (address[] memory studetntList) {
         UserType userType = getUserType[msg.sender];
 
         if (userType == UserType.UNIVERSITY) {

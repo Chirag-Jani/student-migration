@@ -17,7 +17,7 @@ contract ApplicationContract is StudentRegistration {
         string memory transferCerti,
         string memory marksheet,
         string memory migrationCerti
-    ) public returns (bytes32 applicationId){
+    ) public returns (bytes32 applicationId) {
         // get college
         University storage toUniversity = getUniversity[getCollege[to].uniAddr];
 
@@ -172,7 +172,6 @@ contract ApplicationContract is StudentRegistration {
             getStudentsUnderCollege[fromCourse.clgAddr][fromCourse.addr][
                 true
             ] = studUndCol;
-            
         } else {
             // change to reject
             application.status = ApplicationStatus.REJECTED;
@@ -193,4 +192,3 @@ contract ApplicationContract is StudentRegistration {
         }
     }
 }
-
