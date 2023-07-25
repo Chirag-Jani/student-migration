@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Typography, List, ListItem, ListItemText } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const StudentProfile = (props) => {
   const { loggedInUserInfo } = props;
@@ -31,6 +32,15 @@ const StudentProfile = (props) => {
       >
         Student Profile
       </Typography>
+      <Link to={"/transfer"}>
+        {" "}
+        <Typography
+          variant="h5"
+          sx={{ textAlign: "center", marginBottom: "20px" }}
+        >
+          Start Transfer
+        </Typography>
+      </Link>
       <List>
         <ListItem>
           <ListItemText primary={`Name: ${name}`} />

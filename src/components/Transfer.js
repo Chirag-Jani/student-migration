@@ -1,180 +1,39 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   FormControl,
   InputLabel,
   MenuItem,
   Select,
   Button,
+  Input,
 } from "@mui/material";
+import { create } from "ipfs-http-client";
+import { Buffer } from "buffer";
 
-const Transfer = () => {
-  const universities = [
-    {
-      addr: "0xUNI1",
-      uniName: "University 1",
-      colleges: ["0xCOL1", "0xCOL2", "0xCOL3"],
-    },
-    {
-      addr: "0xUNI2",
-      uniName: "University 2",
-      colleges: ["0xCOL4", "0xCOL5", "0xCOL6"],
-    },
-  ];
-
-  const colleges = [
-    {
-      addr: "0xCOL1",
-      clgName: "College 1",
-      uniAddr: "0xUNI1",
-      courses: ["0xCOURSE1", "0xCOURSE2", "0xCOURSE2"],
-    },
-    {
-      addr: "0xCOL2",
-      clgName: "College 2",
-      uniAddr: "0xUNI1",
-      courses: ["0xCOURSE3", "0xCOURSE4"],
-    },
-    {
-      addr: "0xCOL3",
-      clgName: "College 3",
-      uniAddr: "0xUNI1",
-      courses: ["0xCOURSE6"],
-    },
-    {
-      addr: "0xCOL4",
-      clgName: "College 4",
-      uniAddr: "0xUNI2",
-      courses: ["0xCOURSE7", "0xCOURSE8"],
-    },
-    {
-      addr: "0xCOL5",
-      clgName: "College 5",
-      uniAddr: "0xUNI2",
-      courses: ["0xCOURSE9", "0xCOURSE10"],
-    },
-    {
-      addr: "0xCOL6",
-      clgName: "College 6",
-      uniAddr: "0xUNI2",
-      courses: ["0xCOURSE11", "0xCOURSE12"],
-    },
-  ];
-
-  const courses = [
-    {
-      addr: "0xCOURSE1",
-      totalSeats: 100,
-      availableSeats: 50,
-      courseType: "Course Type 1",
-      courseName: "Course 1 - College 1",
-      clgAddr: "0xCOL1",
-      uniAddr: "0xUNI1",
-    },
-    {
-      addr: "0xCOURSE2",
-      totalSeats: 80,
-      availableSeats: 20,
-      courseType: "Course Type 2",
-      courseName: "Course 2 - College 1",
-      clgAddr: "0xCOL1",
-      uniAddr: "0xUNI1",
-    },
-    {
-      addr: "0xCOURSE5",
-      totalSeats: 150,
-      availableSeats: 70,
-      courseType: "Course Type 1",
-      courseName: "Course 1 - College 3",
-      clgAddr: "0xCOL3",
-      uniAddr: "0xUNI1",
-    },
-    {
-      addr: "0xCOURSE3",
-      totalSeats: 120,
-      availableSeats: 60,
-      courseType: "Course Type 1",
-      courseName: "Course 1 - College 2",
-      clgAddr: "0xCOL2",
-      uniAddr: "0xUNI1",
-    },
-    {
-      addr: "0xCOURSE4",
-      totalSeats: 90,
-      availableSeats: 30,
-      courseType: "Course Type 2",
-      courseName: "Course 2 - College 2",
-      clgAddr: "0xCOL2",
-      uniAddr: "0xUNI1",
-    },
-    {
-      addr: "0xCOURSE6",
-      totalSeats: 70,
-      availableSeats: 20,
-      courseType: "Course Type 2",
-      courseName: "Course 2 - College 3",
-      clgAddr: "0xCOL3",
-      uniAddr: "0xUNI1",
-    },
-    {
-      addr: "0xCOURSE7",
-      totalSeats: 80,
-      availableSeats: 40,
-      courseType: "Course Type 1",
-      courseName: "Course 1 - College 4",
-      clgAddr: "0xCOL4",
-      uniAddr: "0xUNI2",
-    },
-    {
-      addr: "0xCOURSE8",
-      totalSeats: 60,
-      availableSeats: 10,
-      courseType: "Course Type 2",
-      courseName: "Course 2 - College 4",
-      clgAddr: "0xCOL4",
-      uniAddr: "0xUNI2",
-    },
-    {
-      addr: "0xCOURSE9",
-      totalSeats: 110,
-      availableSeats: 55,
-      courseType: "Course Type 1",
-      courseName: "Course 1 - College 5",
-      clgAddr: "0xCOL5",
-      uniAddr: "0xUNI2",
-    },
-    {
-      addr: "0xCOURSE10",
-      totalSeats: 70,
-      availableSeats: 30,
-      courseType: "Course Type 2",
-      courseName: "Course 2 - College 5",
-      clgAddr: "0xCOL5",
-      uniAddr: "0xUNI2",
-    },
-    {
-      addr: "0xCOURSE11",
-      totalSeats: 90,
-      availableSeats: 45,
-      courseType: "Course Type 1",
-      courseName: "Course 1 - College 6",
-      clgAddr: "0xCOL6",
-      uniAddr: "0xUNI2",
-    },
-    {
-      addr: "0xCOURSE12",
-      totalSeats: 75,
-      availableSeats: 25,
-      courseType: "Course Type 2",
-      courseName: "Course 2 - College 6",
-      clgAddr: "0xCOL6",
-      uniAddr: "0xUNI2",
-    },
-  ];
+const Transfer = (props) => {
+  const {
+    universities,
+    collegeInfo,
+    connectionInfo,
+    loggedInUserInfo,
+    getUniversities,
+    getCollegeDetails,
+  } = props;
 
   const [transferType, setTransferType] = useState("");
   const [selectedUniversity, setSelectedUniversity] = useState("");
   const [selectedCollege, setSelectedCollege] = useState("");
   const [selectedCourse, setSelectedCourse] = useState("");
+
+  // state to show colleges related to the selected university
+  const [col, setCol] = useState([]);
+
+  // state to show courses related to the selected college
+  const [courses, setCourses] = useState([]);
+
+  // files CID
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [ipfsCID, setIpfsCID] = useState("");
 
   const handleTransferTypeChange = (event) => {
     setTransferType(event.target.value);
@@ -184,18 +43,93 @@ const Transfer = () => {
   };
 
   const handleUniversityChange = (event) => {
+    console.log(event.target.value);
     setSelectedUniversity(event.target.value);
     setSelectedCollege("");
     setSelectedCourse("");
+
+    // helper function to get the colleges
+    getCls(event.target.value);
+  };
+
+  // getting colleges
+  const getCls = (universityAddress) => {
+    const relatedColleges = collegeInfo.filter(
+      (college) => college.uniAddr === universityAddress
+    );
+    console.log(relatedColleges);
+
+    // updating the college list
+    setCol(relatedColleges);
   };
 
   const handleCollegeChange = (event) => {
     setSelectedCollege(event.target.value);
     setSelectedCourse("");
+
+    let clgInfo;
+
+    // setting college
+    // eslint-disable-next-line
+    col.map((college) => {
+      // return college.addr === selectedCollege;
+      if (college.addr === event.target.value) {
+        clgInfo = college;
+      }
+    });
+    console.log(clgInfo);
+    getCourses(clgInfo);
   };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const getCourses = useCallback((clgInfo) => {
+    // getting course info and setting
+    clgInfo.courses?.map(async (course) => {
+      try {
+        let tx = await connectionInfo.contract.getCourseInfo(course);
+        setCourses((prevCourses) => [...prevCourses, tx]);
+      } catch (e) {
+        console.log(e);
+      }
+    });
+
+    console.log(courses);
+  });
 
   const handleCourseChange = (event) => {
     setSelectedCourse(event.target.value);
+  };
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const handleUpload = async () => {
+    try {
+      const projectId = "2T3eMNF8knKDGTpszZDyVBGuTrb";
+      const projectSecret = "83431740a593de7a6b5da01b98610c30";
+      const auth =
+        "Basic " +
+        Buffer.from(projectId + ":" + projectSecret).toString("base64");
+      const client = create({
+        host: "ipfs.infura.io",
+        port: 5001,
+        protocol: "https",
+        apiPath: "/api/v0",
+        headers: {
+          authorization: auth,
+        },
+      });
+
+      try {
+        const added = await client.add(selectedFile);
+        console.log(added);
+      } catch (error) {
+        console.log("Error uploading file: ", error);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const handleInitiateTransfer = () => {
@@ -205,24 +139,29 @@ const Transfer = () => {
     console.log("Selected Course:", selectedCourse);
   };
 
-  const filteredColleges =
-    transferType === "COLLEGE_TO_COLLEGE_SAME_UNIVERSITY"
-      ? colleges.filter((college) => college.uniAddr === selectedUniversity)
-      : colleges;
-
-  const filteredCourses =
-    transferType === "COLLEGE_TO_COLLEGE_SAME_UNIVERSITY"
-      ? courses.filter((course) => course.clgAddr === selectedCollege)
-      : courses;
-
+  useEffect(() => {
+    console.log(universities);
+    console.log(collegeInfo);
+  });
   return (
+    // <div
+    //   style={{
+    //     maxWidth: "400px",
+    //     margin: "auto",
+    //     padding: "16px",
+    //   }}
+    // >
+
+    // </div>
     <div
       style={{
-        maxWidth: "400px",
+        maxWidth: "500px",
         margin: "auto",
-        padding: "16px",
       }}
     >
+      <h1>Initiate Transfer:</h1>
+
+      {/* Selecting Transfer Type */}
       <FormControl
         fullWidth
         sx={{
@@ -253,11 +192,13 @@ const Transfer = () => {
               value={selectedUniversity}
               onChange={handleUniversityChange}
             >
-              {universities.map((university, index) => (
-                <MenuItem key={index} value={university.addr}>
-                  {university.uniName}
-                </MenuItem>
-              ))}
+              {universities.map((uni, index) => {
+                return (
+                  <MenuItem key={uni.uniAddr} value={uni.uniAddr}>
+                    {uni.uniName}
+                  </MenuItem>
+                );
+              })}
             </Select>
           </FormControl>
 
@@ -270,11 +211,13 @@ const Transfer = () => {
             >
               <InputLabel>College</InputLabel>
               <Select value={selectedCollege} onChange={handleCollegeChange}>
-                {filteredColleges.map((college, index) => (
-                  <MenuItem key={index} value={college.addr}>
-                    {college.clgName}
-                  </MenuItem>
-                ))}
+                {col
+                  .filter((college) => college.uniAddr === selectedUniversity)
+                  .map((college, index) => (
+                    <MenuItem key={index} value={college.addr}>
+                      {college.clgName}
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
           )}
@@ -294,11 +237,13 @@ const Transfer = () => {
               value={selectedUniversity}
               onChange={handleUniversityChange}
             >
-              {universities.map((university, index) => (
-                <MenuItem key={index} value={university.addr}>
-                  {university.uniName}
-                </MenuItem>
-              ))}
+              {universities.map((uni, index) => {
+                return (
+                  <MenuItem key={uni.uniAddr} value={uni.uniAddr}>
+                    {uni.uniName}
+                  </MenuItem>
+                );
+              })}
             </Select>
           </FormControl>
 
@@ -311,13 +256,16 @@ const Transfer = () => {
             >
               <InputLabel>College</InputLabel>
               <Select value={selectedCollege} onChange={handleCollegeChange}>
-                {colleges
-                  .filter((college) => college.uniAddr === selectedUniversity)
-                  .map((college, index) => (
-                    <MenuItem key={index} value={college.addr}>
-                      {college.clgName}
+                <MenuItem value="">
+                  <em>Select College</em>
+                </MenuItem>
+                {col?.map((clg) => {
+                  return (
+                    <MenuItem value={clg.addr} key={clg.addr}>
+                      {clg.clgName}
                     </MenuItem>
-                  ))}
+                  );
+                })}
               </Select>
             </FormControl>
           )}
@@ -334,13 +282,32 @@ const Transfer = () => {
           >
             <InputLabel>Course</InputLabel>
             <Select value={selectedCourse} onChange={handleCourseChange}>
-              {filteredCourses.map((course, index) => (
+              {courses.map((course, index) => (
                 <MenuItem key={index} value={course.addr}>
                   {course.courseName}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
+          {selectedCourse && (
+            <>
+              <Input
+                type="file"
+                inputProps={{
+                  accept: ".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.txt",
+                }}
+                onChange={handleFileChange}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleUpload}
+              >
+                Upload to IPFS
+              </Button>
+              {ipfsCID && <p>IPFS CID: {ipfsCID}</p>}
+            </>
+          )}
 
           <Button
             variant="contained"
