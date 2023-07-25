@@ -1,0 +1,562 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "collegeAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "collegeName",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "universityAddress",
+        "type": "address"
+      }
+    ],
+    "name": "addCollege",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "courseName",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "courseAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "enum DataContract.Coursetype",
+        "name": "courseType",
+        "type": "uint8"
+      },
+      {
+        "internalType": "address",
+        "name": "collegeAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "universityAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "seats",
+        "type": "uint256"
+      }
+    ],
+    "name": "addCourse",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "universityName",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "universityAddress",
+        "type": "address"
+      }
+    ],
+    "name": "addUniversity",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "courseAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "studentAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "assignedRegNo",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "assignedBatchNo",
+        "type": "string"
+      }
+    ],
+    "name": "approve",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bool",
+        "name": "login",
+        "type": "bool"
+      }
+    ],
+    "name": "auth",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAllUniversities",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "getCollege",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "clgName",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "uniAddr",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "clgAddr",
+        "type": "address"
+      }
+    ],
+    "name": "getCollegeInfo",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "clgName",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "uniAddr",
+        "type": "address"
+      },
+      {
+        "internalType": "address[]",
+        "name": "courses",
+        "type": "address[]"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "applications",
+        "type": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "getCourse",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalSeats",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "availableSeats",
+        "type": "uint256"
+      },
+      {
+        "internalType": "enum DataContract.Coursetype",
+        "name": "courseType",
+        "type": "uint8"
+      },
+      {
+        "internalType": "string",
+        "name": "courseName",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "clgAddr",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "uniAddr",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "courseAddr",
+        "type": "address"
+      }
+    ],
+    "name": "getCourseInfo",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalSeats",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "availableSeats",
+        "type": "uint256"
+      },
+      {
+        "internalType": "enum DataContract.Coursetype",
+        "name": "courseType",
+        "type": "uint8"
+      },
+      {
+        "internalType": "string",
+        "name": "courseName",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "clgAddr",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "uniAddr",
+        "type": "address"
+      },
+      {
+        "internalType": "address[]",
+        "name": "enrolledStudents",
+        "type": "address[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "requestedStudents",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "getStudent",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "courseAddr",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "clgAddr",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "uniAddr",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "regNo",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "batch",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "studAddr",
+        "type": "address"
+      }
+    ],
+    "name": "getStudentInfo",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "courseAddr",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "clgAddr",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "uniAddr",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "regNo",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "batch",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "migrationApplications",
+        "type": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "courseAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "enrolled",
+        "type": "bool"
+      }
+    ],
+    "name": "getStudentList",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "studetntList",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "getUniversity",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "uniName",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "uniAddr",
+        "type": "address"
+      }
+    ],
+    "name": "getUniversityInfo",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "uniName",
+        "type": "string"
+      },
+      {
+        "internalType": "address[]",
+        "name": "colleges",
+        "type": "address[]"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "applications",
+        "type": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "getUserType",
+    "outputs": [
+      {
+        "internalType": "enum DataContract.UserType",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "studentName",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "courseAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "collegeAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "universityAddress",
+        "type": "address"
+      }
+    ],
+    "name": "signup",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "userLoggedIn",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

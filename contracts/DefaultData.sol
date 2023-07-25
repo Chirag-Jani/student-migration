@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.7;
+
+// Replace the word "Migration" to "Transfer"
 
 contract DataContract {
     address admin;
@@ -39,7 +41,7 @@ contract DataContract {
         address uniAddr; // university address
         string regNo; // registration number
         string batch; // batch id
-        bytes32[] migrationApplications;
+        bytes32[] migrationApplications; // transferApplications
     }
 
     enum Coursetype {
@@ -85,20 +87,20 @@ contract DataContract {
     }
 
     // basic user data structures
-    mapping(address => Student) getStudent;
-    mapping(address => Course) getCourse;
-    mapping(address => College) getCollege;
-    mapping(address => University) getUniversity;
+    address[] allUniversities;
+    mapping(address => Student) public getStudent;
+    mapping(address => Course) public getCourse;
+    mapping(address => College) public getCollege;
+    mapping(address => University) public getUniversity;
     mapping(address => bool) userExist; // internal call
     mapping(address => bool) public userLoggedIn; // to check if user is logged in or not
-    address[] public allUniversities; // needed for frontend
 
     // __________________________________________________
 
     // other mappings for data access
 
     // to get user type of msg.sender for hierarchy comparision
-    mapping(address => UserType) getUserType; // internal call
+    mapping(address => UserType) public getUserType; // internal call
 
     // university => course => => bool => enrolled or requested students
     mapping(address => mapping(address => mapping(bool => address[]))) getStudentsUnderUniversity;
@@ -175,7 +177,7 @@ contract DataContract {
         Coursetype courseType,
         address collegeAddress,
         address universityAddress,
-        uint256 seats
+        uint seats
     ) public {
         // checks not needed, will handle from frontend
         // require(
@@ -275,14 +277,19 @@ contract DataContract {
         // adding to mapping
         getUniversity[universityAddress] = university;
 
+        // adding to array
+        allUniversities.push(universityAddress);
+
         // user exist
         userExist[universityAddress] = true;
 
         // adding to the usertype mapping
         getUserType[universityAddress] = UserType.UNIVERSITY;
+    }
 
-        // adding to the array
-        allUniversities.push(universityAddress);
+    // GET ALL UNIVERSITIES
+    function getAllUniversities() public view returns (address[] memory) {
+        return allUniversities;
     }
 
     // these functions are not needed, will be handled from frontend
@@ -320,12 +327,12 @@ contract DataContract {
         College memory clg = getCollege[clgAddr];
 
         // itself, or its parent university, or admin can see
-        require(
-            msg.sender == clgAddr ||
-                msg.sender == clg.uniAddr ||
-                msg.sender == admin,
-            "Access Denied!"
-        );
+        // require(
+        //     msg.sender == clgAddr ||
+        //         msg.sender == clg.uniAddr ||
+        //         msg.sender == admin,
+        //     "Access Denied!"
+        // );
 
         return (
             clg.addr,
@@ -354,12 +361,12 @@ contract DataContract {
         )
     {
         Course memory cour = getCourse[courseAddr];
-        require(
-            msg.sender == cour.clgAddr ||
-                msg.sender == cour.uniAddr ||
-                msg.sender == admin,
-            "Access Denied!"
-        );
+        // require(
+        //     msg.sender == cour.clgAddr ||
+        //         msg.sender == cour.uniAddr ||
+        //         msg.sender == admin,
+        //     "Access Denied!"
+        // );
         return (
             cour.addr,
             cour.totalSeats,
@@ -390,13 +397,13 @@ contract DataContract {
         )
     {
         Student memory stud = getStudent[studAddr];
-        require(
-            msg.sender == studAddr ||
-                msg.sender == stud.clgAddr ||
-                msg.sender == stud.uniAddr ||
-                msg.sender == admin,
-            "Access Denied!"
-        );
+        // require(
+        //     msg.sender == studAddr ||
+        //         msg.sender == stud.clgAddr ||
+        //         msg.sender == stud.uniAddr ||
+        //         msg.sender == admin,
+        //     "Access Denied!"
+        // );
         return (
             stud.addr,
             stud.name,

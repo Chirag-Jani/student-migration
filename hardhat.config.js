@@ -6,10 +6,11 @@ module.exports = {
   defaultNetwork: "localhost",
   // specifying the solidity version
   solidity: {
-    version: "0.8.17",
+    version: "0.8.7",
     optimizer: {
       enabled: true,
-      runs: 1000,
+      viaIR: true,
+      runs: 50, // Update the number of runs to 200
     },
   },
   // specifying the network

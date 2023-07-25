@@ -1,18 +1,30 @@
+// native and react imports
 import * as React from "react";
+import LoginComponent from "../components/LoginComponent";
+import RegisterComponent from "../components/RegisterComponent";
 
+// MUI imports
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import LoginComponent from "../components/LoginComponent";
-import RegisterComponent from "../components/RegisterComponent";
 
-export default function Auth({ universities, collegeInfo }) {
-  const [value, setValue] = React.useState("register");
+export default function Auth(props) {
+  const {
+    universities,
+    collegeInfo,
+    connectionInfo,
+    setUserLoggedIn,
+    setLoggedInUserInfo,
+  } = props;
 
+  // state to handle tab switches
+  const [selectedTab, setSelectedTab] = React.useState("login");
+
+  // changing tabs
   const handleChange = (event, newValue) => {
-    setValue(newValue);
+    setSelectedTab(newValue);
   };
 
   return (
@@ -23,9 +35,10 @@ export default function Auth({ universities, collegeInfo }) {
         typography: "body1",
         boxShadow: "5px 4px 13px -4px rgba(0, 0, 0, 0.5)",
         borderRadius: "10px ",
+        textAlign: "center",
       }}
     >
-      <TabContext value={value}>
+      <TabContext value={selectedTab}>
         <Box>
           <TabList onChange={handleChange}>
             <Tab
@@ -49,12 +62,17 @@ export default function Auth({ universities, collegeInfo }) {
           </TabList>
         </Box>
         <TabPanel value="login">
-          <LoginComponent />
+          <LoginComponent
+            connectionInfo={connectionInfo}
+            setUserLoggedIn={setUserLoggedIn}
+            setLoggedInUserInfo={setLoggedInUserInfo}
+          />
         </TabPanel>
         <TabPanel value="register">
           <RegisterComponent
             universities={universities}
             collegeInfo={collegeInfo}
+            connectionInfo={connectionInfo}
           />
         </TabPanel>
       </TabContext>

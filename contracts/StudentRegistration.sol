@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.7;
 import "contracts/DefaultData.sol";
 
 contract StudentRegistration is DataContract {
@@ -54,7 +54,6 @@ contract StudentRegistration is DataContract {
 
         // these are needed to fetch the list of students (requested and enrolled)
         // add to requested students under college and university both
-        // currently commenting out this, and will try to fetch data from frontend (uni->clg->cour->data)
         getStudentsUnderCollege[collegeAddress][courseAddress][false].push(
             msg.sender
         );
@@ -130,7 +129,7 @@ contract StudentRegistration is DataContract {
 
     // login and logout
     function auth(bool login) public {
-        require(userLoggedIn[msg.sender] == !login);
+        // require(userLoggedIn[msg.sender] == !login);
         userLoggedIn[msg.sender] = login;
     }
 
