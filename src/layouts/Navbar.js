@@ -89,23 +89,7 @@ export default function Navbar(props) {
                 Profile
               </Button>
             </Link>
-            <Link
-              to="/transfer"
-              style={{ textDecoration: "none", color: "white" }}
-            >
-              <Button
-                color="inherit"
-                sx={{
-                  fontWeight: 700,
-                  fontSize: "16px",
-                  textTransform: "none",
-                  letterSpacing: "0.5px",
-                  marginRight: "16px",
-                }}
-              >
-                Transfer
-              </Button>
-            </Link>
+
             {!userLoggedIn ? (
               <Link to="/" style={{ textDecoration: "none", color: "white" }}>
                 <Button
@@ -122,6 +106,23 @@ export default function Navbar(props) {
               </Link>
             ) : (
               <>
+                {/* <Link
+                  to="/transfer"
+                  style={{ textDecoration: "none", color: "white" }}
+                >
+                  <Button
+                    color="inherit"
+                    sx={{
+                      fontWeight: 700,
+                      fontSize: "16px",
+                      textTransform: "none",
+                      letterSpacing: "0.5px",
+                      marginRight: "16px",
+                    }}
+                  >
+                    Transfer
+                  </Button>
+                </Link> */}
                 <Button
                   onClick={logout}
                   sx={{

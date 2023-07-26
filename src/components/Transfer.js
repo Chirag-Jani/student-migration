@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   FormControl,
   InputLabel,
@@ -11,19 +11,20 @@ import { create } from "ipfs-http-client";
 import { Buffer } from "buffer";
 
 const Transfer = (props) => {
-  const {
-    universities,
-    collegeInfo,
-    connectionInfo,
-    loggedInUserInfo,
-    getUniversities,
-    getCollegeDetails,
-  } = props;
+  const { universities, collegeInfo, connectionInfo, loggedInUserInfo } = props;
 
-  const [transferType, setTransferType] = useState("");
-  const [selectedUniversity, setSelectedUniversity] = useState("");
-  const [selectedCollege, setSelectedCollege] = useState("");
-  const [selectedCourse, setSelectedCourse] = useState("");
+  const { uniAddr, clgAddr, courseAddr } = loggedInUserInfo;
+
+  const [applicationInfo, setApplicationInfo] = useState({
+    transferType: null,
+    selectedUniversity: "",
+    selectedCollege: "",
+    selectedCourse: "",
+    nocCID: "",
+    transferCertiCID: "",
+    marksheetCID: "",
+    migrationCertiCID: "",
+  });
 
   // state to show colleges related to the selected university
   const [col, setCol] = useState([]);
@@ -31,22 +32,42 @@ const Transfer = (props) => {
   // state to show courses related to the selected college
   const [courses, setCourses] = useState([]);
 
-  // files CID
+  // temporary fild holding
   const [selectedFile, setSelectedFile] = useState(null);
-  const [ipfsCID, setIpfsCID] = useState("");
 
   const handleTransferTypeChange = (event) => {
-    setTransferType(event.target.value);
-    setSelectedUniversity("");
-    setSelectedCollege("");
-    setSelectedCourse("");
+    console.log(event.target.value);
+    setApplicationInfo({
+      ...applicationInfo,
+      selectedCollege: "",
+      selectedCourse: "",
+      nocCID: "",
+      transferCertiCID: "",
+      marksheetCID: "",
+      migrationCertiCID: "",
+      transferType: event.target.value,
+      selectedUniversity: uniAddr,
+    });
+
+    setCol([]);
+    setCourses([]);
+    getCls(uniAddr);
   };
 
   const handleUniversityChange = (event) => {
     console.log(event.target.value);
-    setSelectedUniversity(event.target.value);
-    setSelectedCollege("");
-    setSelectedCourse("");
+    setApplicationInfo({
+      ...applicationInfo,
+      selectedCollege: "",
+      selectedCourse: "",
+      nocCID: "",
+      transferCertiCID: "",
+      marksheetCID: "",
+      migrationCertiCID: "",
+      selectedUniversity: event.target.value,
+    });
+    setCol([]);
+    setCourses([]);
 
     // helper function to get the colleges
     getCls(event.target.value);
@@ -61,11 +82,20 @@ const Transfer = (props) => {
 
     // updating the college list
     setCol(relatedColleges);
+    setCourses([]);
   };
 
   const handleCollegeChange = (event) => {
-    setSelectedCollege(event.target.value);
-    setSelectedCourse("");
+    // setSelectedCollege(event.target.value);
+    setApplicationInfo({
+      ...applicationInfo,
+      selectedCourse: "",
+      nocCID: "",
+      transferCertiCID: "",
+      marksheetCID: "",
+      migrationCertiCID: "",
+      selectedCollege: event.target.value,
+    });
 
     let clgInfo;
 
@@ -81,7 +111,7 @@ const Transfer = (props) => {
     getCourses(clgInfo);
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line
   const getCourses = useCallback((clgInfo) => {
     // getting course info and setting
     clgInfo.courses?.map(async (course) => {
@@ -97,14 +127,25 @@ const Transfer = (props) => {
   });
 
   const handleCourseChange = (event) => {
-    setSelectedCourse(event.target.value);
+    setApplicationInfo({
+      ...applicationInfo,
+      nocCID: "",
+      transferCertiCID: "",
+      marksheetCID: "",
+      migrationCertiCID: "",
+      selectedCourse: event.target.value,
+    });
   };
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
+    setApplicationInfo({
+      ...applicationInfo,
+      [event.target.name]: "",
+    });
   };
 
-  const handleUpload = async () => {
+  const handleUpload = async (event) => {
     try {
       const projectId = "2T3eMNF8knKDGTpszZDyVBGuTrb";
       const projectSecret = "83431740a593de7a6b5da01b98610c30";
@@ -124,6 +165,10 @@ const Transfer = (props) => {
       try {
         const added = await client.add(selectedFile);
         console.log(added);
+        setApplicationInfo({
+          ...applicationInfo,
+          [event.target.name]: added.path,
+        });
       } catch (error) {
         console.log("Error uploading file: ", error);
       }
@@ -132,31 +177,43 @@ const Transfer = (props) => {
     }
   };
 
-  const handleInitiateTransfer = () => {
-    console.log("Transfer Type:", transferType);
-    console.log("Selected University:", selectedUniversity);
-    console.log("Selected College:", selectedCollege);
-    console.log("Selected Course:", selectedCourse);
+  const handleInitiateTransfer = async () => {
+    try {
+      const {
+        transferType,
+        // selectedUniversity,
+        selectedCollege,
+        selectedCourse,
+        nocCID,
+        transferCertiCID,
+        marksheetCID,
+        migrationCertiCID,
+      } = applicationInfo;
+      const tx = await connectionInfo.contract.initiateTransfer(
+        transferType,
+        clgAddr,
+        selectedCollege,
+        courseAddr,
+        selectedCourse,
+        nocCID,
+        transferCertiCID,
+        marksheetCID,
+        migrationCertiCID
+      );
+      if (tx) {
+        alert("Transfer Initiated Successfully!!!");
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
-  useEffect(() => {
-    console.log(universities);
-    console.log(collegeInfo);
-  });
   return (
-    // <div
-    //   style={{
-    //     maxWidth: "400px",
-    //     margin: "auto",
-    //     padding: "16px",
-    //   }}
-    // >
-
-    // </div>
     <div
       style={{
-        maxWidth: "500px",
+        maxWidth: "400px",
         margin: "auto",
+        padding: "16px",
       }}
     >
       <h1>Initiate Transfer:</h1>
@@ -169,17 +226,18 @@ const Transfer = (props) => {
         }}
       >
         <InputLabel>Transfer Type</InputLabel>
-        <Select value={transferType} onChange={handleTransferTypeChange}>
-          <MenuItem value="COLLEGE_TO_COLLEGE_SAME_UNIVERSITY">
-            College to College (Same University)
-          </MenuItem>
-          <MenuItem value="COLLEGE_TO_COLLEGE_DIFFERENT_UNIVERSITY">
+        <Select
+          value={applicationInfo.transferType}
+          onChange={handleTransferTypeChange}
+        >
+          <MenuItem value={0}>College to College (Same University)</MenuItem>
+          <MenuItem value={1}>
             College to College (Different University)
           </MenuItem>
         </Select>
       </FormControl>
 
-      {transferType === "COLLEGE_TO_COLLEGE_SAME_UNIVERSITY" && (
+      {applicationInfo.transferType === 0 && (
         <div>
           <FormControl
             fullWidth
@@ -189,8 +247,9 @@ const Transfer = (props) => {
           >
             <InputLabel>University</InputLabel>
             <Select
-              value={selectedUniversity}
+              value={applicationInfo.selectedUniversity}
               onChange={handleUniversityChange}
+              disabled
             >
               {universities.map((uni, index) => {
                 return (
@@ -202,7 +261,7 @@ const Transfer = (props) => {
             </Select>
           </FormControl>
 
-          {selectedUniversity && (
+          {applicationInfo.selectedUniversity && (
             <FormControl
               fullWidth
               sx={{
@@ -210,9 +269,15 @@ const Transfer = (props) => {
               }}
             >
               <InputLabel>College</InputLabel>
-              <Select value={selectedCollege} onChange={handleCollegeChange}>
+              <Select
+                value={applicationInfo.selectedCollege}
+                onChange={handleCollegeChange}
+              >
                 {col
-                  .filter((college) => college.uniAddr === selectedUniversity)
+                  .filter(
+                    (college) =>
+                      college.uniAddr === applicationInfo.selectedUniversity
+                  )
                   .map((college, index) => (
                     <MenuItem key={index} value={college.addr}>
                       {college.clgName}
@@ -224,7 +289,7 @@ const Transfer = (props) => {
         </div>
       )}
 
-      {transferType === "COLLEGE_TO_COLLEGE_DIFFERENT_UNIVERSITY" && (
+      {applicationInfo.transferType === 1 && (
         <div>
           <FormControl
             fullWidth
@@ -234,20 +299,22 @@ const Transfer = (props) => {
           >
             <InputLabel>University</InputLabel>
             <Select
-              value={selectedUniversity}
+              value={applicationInfo.selectedUniversity}
               onChange={handleUniversityChange}
             >
               {universities.map((uni, index) => {
                 return (
-                  <MenuItem key={uni.uniAddr} value={uni.uniAddr}>
-                    {uni.uniName}
-                  </MenuItem>
+                  uni.uniAddr !== uniAddr && (
+                    <MenuItem key={uni.uniAddr} value={uni.uniAddr}>
+                      {uni.uniName}
+                    </MenuItem>
+                  )
                 );
               })}
             </Select>
           </FormControl>
 
-          {selectedUniversity && (
+          {applicationInfo.selectedUniversity && (
             <FormControl
               fullWidth
               sx={{
@@ -255,7 +322,10 @@ const Transfer = (props) => {
               }}
             >
               <InputLabel>College</InputLabel>
-              <Select value={selectedCollege} onChange={handleCollegeChange}>
+              <Select
+                value={applicationInfo.selectedCollege}
+                onChange={handleCollegeChange}
+              >
                 <MenuItem value="">
                   <em>Select College</em>
                 </MenuItem>
@@ -272,7 +342,7 @@ const Transfer = (props) => {
         </div>
       )}
 
-      {transferType && selectedCollege && (
+      {applicationInfo.selectedCollege && (
         <div>
           <FormControl
             fullWidth
@@ -281,7 +351,10 @@ const Transfer = (props) => {
             }}
           >
             <InputLabel>Course</InputLabel>
-            <Select value={selectedCourse} onChange={handleCourseChange}>
+            <Select
+              value={applicationInfo.selectedCourse}
+              onChange={handleCourseChange}
+            >
               {courses.map((course, index) => (
                 <MenuItem key={index} value={course.addr}>
                   {course.courseName}
@@ -289,33 +362,159 @@ const Transfer = (props) => {
               ))}
             </Select>
           </FormControl>
-          {selectedCourse && (
+          {applicationInfo.selectedCourse && (
             <>
+              <InputLabel
+                sx={{
+                  margin: "10px",
+                }}
+              >
+                Upload NOC:
+              </InputLabel>
               <Input
                 type="file"
                 inputProps={{
                   accept: ".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.txt",
                 }}
+                name="nocCID"
                 onChange={handleFileChange}
               />
               <Button
                 variant="contained"
                 color="primary"
                 onClick={handleUpload}
+                name="nocCID"
+                sx={{
+                  display: `${applicationInfo.nocCID !== "" && "none"}`,
+                }}
               >
-                Upload to IPFS
+                Upload
               </Button>
-              {ipfsCID && <p>IPFS CID: {ipfsCID}</p>}
+              {/* {applicationInfo.nocCID && (
+                <p>NOC CID: {applicationInfo.nocCID}</p>
+              )} */}
+            </>
+          )}
+          {applicationInfo.nocCID && (
+            <>
+              <InputLabel
+                sx={{
+                  margin: "10px",
+                }}
+              >
+                Upload Transfer Certificate:
+              </InputLabel>
+              <Input
+                type="file"
+                inputProps={{
+                  accept: ".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.txt",
+                }}
+                name="transferCertiCID"
+                onChange={handleFileChange}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                name="transferCertiCID"
+                onClick={handleUpload}
+                sx={{
+                  display: `${
+                    applicationInfo.transferCertiCID !== "" && "none"
+                  }`,
+                }}
+              >
+                Upload
+              </Button>
+              {/* {applicationInfo.transferCertiCID && (
+                <p>
+                  Transfer Certificate CID: {applicationInfo.transferCertiCID}
+                </p>
+              )} */}
+            </>
+          )}
+          {applicationInfo.transferCertiCID && (
+            <>
+              <InputLabel
+                sx={{
+                  margin: "10px",
+                }}
+              >
+                Upload Marksheet:
+              </InputLabel>
+              <Input
+                type="file"
+                inputProps={{
+                  accept: ".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.txt",
+                }}
+                name="marksheetCID"
+                onChange={handleFileChange}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                name="marksheetCID"
+                onClick={handleUpload}
+                sx={{
+                  display: `${applicationInfo.marksheetCID !== "" && "none"}`,
+                }}
+              >
+                Upload
+              </Button>
+              {/* {applicationInfo.marksheetCID && (
+                <p>Marksheet CID: {applicationInfo.marksheetCID}</p>
+              )} */}
+            </>
+          )}
+          {applicationInfo.marksheetCID && (
+            <>
+              <InputLabel
+                sx={{
+                  margin: "10px",
+                }}
+              >
+                Upload Migration Certificate:
+              </InputLabel>
+              <Input
+                type="file"
+                inputProps={{
+                  accept: ".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.txt",
+                }}
+                name="migrationCertiCID"
+                onChange={handleFileChange}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                name="migrationCertiCID"
+                onClick={handleUpload}
+                sx={{
+                  display: `${
+                    applicationInfo.migrationCertiCID !== "" && "none"
+                  }`,
+                }}
+              >
+                Upload
+              </Button>
+              {/* {applicationInfo.migrationCertiCID && (
+                <p>
+                  Migration Certificate CID: {applicationInfo.migrationCertiCID}
+                </p>
+              )} */}
             </>
           )}
 
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleInitiateTransfer}
-          >
-            Initiate Transfer
-          </Button>
+          {applicationInfo.migrationCertiCID && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleInitiateTransfer}
+              sx={{
+                margin: "20px 0",
+              }}
+            >
+              Initiate Transfer
+            </Button>
+          )}
         </div>
       )}
     </div>

@@ -34,76 +34,7 @@ function App() {
   // list of universities (addresses only to fetch when load)
   const [universities, setUniversities] = useState([]);
 
-  const [collegeInfo, setCollegeInfo] = useState([
-    // {
-    //   collegeAddr: "0xladjfl23",
-    //   collegeName: "CGPIT",
-    //   uniAddr: "0x123",
-    //   courses: [
-    //     {
-    //       courseAddr: "0xe4rd",
-    //       totalSeates: 120,
-    //       availableSeates: 120,
-    //       courseType: 0,
-    //       courseName: "InfoTech",
-    //       clgAddr: "0xladjfl23",
-    //       uniAddr: "0x123",
-    //       enrolledStuds: [],
-    //       requestedStuds: [],
-    //     },
-    //     {
-    //       courseAddr: "053frd",
-    //       totalSeates: 120,
-    //       availableSeates: 120,
-    //       courseType: 0,
-    //       courseName: "Civil engineering",
-    //       clgAddr: "0xladjfl23",
-    //       uniAddr: "0x123",
-    //       enrolledStuds: [],
-    //       requestedStuds: [],
-    //     },
-    //   ],
-    //   applications: [],
-    // },
-    // {
-    //   collegeAddr: "0x24fsdjfl23",
-    //   collegeName: "BMIIT",
-    //   uniAddr: "0x123",
-    //   courses: [
-    //     {
-    //       courseAddr: "03fxe4rd",
-    //       totalSeates: 120,
-    //       availableSeates: 120,
-    //       courseType: 0,
-    //       courseName: "MSCIT",
-    //       clgAddr: "0x24fsdjfl23",
-    //       uniAddr: "0x123",
-    //       enrolledStuds: [],
-    //       requestedStuds: [],
-    //     },
-    //   ],
-    //   applications: [],
-    // },
-    // {
-    //   collegeAddr: "0xBw23",
-    //   collegeName: "Silver Oak",
-    //   uniAddr: "0xAbd",
-    //   courses: [
-    //     {
-    //       courseAddr: "03fxe4rd",
-    //       totalSeates: 120,
-    //       availableSeates: 120,
-    //       courseType: 0,
-    //       courseName: "Computer ENgg",
-    //       clgAddr: "0xBw23",
-    //       uniAddr: "0xAbd",
-    //       enrolledStuds: [],
-    //       requestedStuds: [],
-    //     },
-    //   ],
-    //   applications: [],
-    // },
-  ]);
+  const [collegeInfo, setCollegeInfo] = useState([]);
 
   // getting the lisf of universities (addresses only)
   const getUniversities = async () => {
@@ -200,6 +131,7 @@ function App() {
 
     // connecting the metamask wallet
     const connectWallet = async () => {
+      // eslint-disable-next-line
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
@@ -272,8 +204,6 @@ function App() {
                   collegeInfo={collegeInfo}
                   connectionInfo={connectionInfo}
                   loggedInUserInfo={loggedInUserInfo}
-                  getUniversities={getUniversities}
-                  getCollegeDetails={getCollegeDetails}
                 />
               }
             />

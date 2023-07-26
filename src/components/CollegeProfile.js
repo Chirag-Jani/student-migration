@@ -20,7 +20,7 @@ import React, { useState } from "react";
 
 const CollegeProfile = (props) => {
   const { loggedInUserInfo, connectionInfo } = props;
-  const { addr, applications, clgName, courses, uniAddr } = loggedInUserInfo;
+  const { addr, applications, clgName, courses } = loggedInUserInfo;
 
   const [searchType, setSearchType] = useState("Course");
   const [searchAddress, setSearchAddress] = useState("");
