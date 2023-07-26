@@ -1,9 +1,9 @@
 import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import UniversityProfile from "../components/UniversityProfile";
-import CollegeProfile from "../components/CollegeProfile";
-import StudentProfile from "../components/StudentProfile";
+import UniversityProfile from "../components/ProfileComponents/UniversityProfile";
+import CollegeProfile from "../components/ProfileComponents/CollegeProfile";
+import StudentProfile from "../components/ProfileComponents/StudentProfile";
 
 const Profile = (props) => {
   const { userLoggedIn, connectionInfo, loggedInUserInfo } = props;

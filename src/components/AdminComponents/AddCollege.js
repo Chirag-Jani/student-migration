@@ -1,5 +1,5 @@
 import React from "react";
-import InputComp from "./InputComp";
+import InputComp from "../InputComp";
 import { Grid, Box, Button, MenuItem, Select, Typography } from "@mui/material";
 
 const AddCollege = (props) => {

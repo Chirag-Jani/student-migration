@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import AddUniversity from "../components/AddUniversity";
-import AddCollege from "../components/AddCollege";
-import AddCourse from "../components/AddCourse";
+import AddUniversity from "../components/AdminComponents/AddUniversity";
+import AddCollege from "../components/AdminComponents/AddCollege";
+import AddCourse from "../components/AdminComponents/AddCourse";
 
 const Admin = ({ connectionInfo, universities }) => {
   // state while adding orgs (uni, clg, course)

@@ -1,7 +1,7 @@
 // native and react imports
 import * as React from "react";
-import LoginComponent from "../components/LoginComponent";
-import RegisterComponent from "../components/RegisterComponent";
+import LoginComponent from "../components/AuthComponents/LoginComponent";
+import RegisterComponent from "../components/AuthComponents/RegisterComponent";
 
 // MUI imports
 import Box from "@mui/material/Box";

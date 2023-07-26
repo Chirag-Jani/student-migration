@@ -1,5 +1,5 @@
 import React from "react";
-import InputComp from "./InputComp";
+import InputComp from "../InputComp";
 import { Grid, Typography, Box, Button } from "@mui/material";
 
 const AddUniversity = (props) => {

@@ -1,6 +1,6 @@
 // native imports
 import { useCallback, useState } from "react";
-import MetaMaskLogo from "../assets/metamask.svg";
+import MetaMaskLogo from "../../assets/metamask.svg";
 
 // MUI imports
 import {

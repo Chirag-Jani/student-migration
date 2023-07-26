@@ -12,7 +12,7 @@ import ApplicationContractABI from "./assets/ContractAbi/ApplicationContract.jso
 import { ethers } from "ethers";
 import { Button, ThemeProvider } from "@mui/material";
 import Profile from "./pages/Profile";
-import Transfer from "./components/Transfer";
+import Transfer from "./pages/Transfer";
 
 // const DataContractAddress = "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6";
 // const StudentRegistrationContractAddress =
