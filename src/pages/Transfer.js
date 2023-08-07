@@ -36,7 +36,6 @@ const Transfer = (props) => {
   const [selectedFile, setSelectedFile] = useState(null);
 
   const handleTransferTypeChange = (event) => {
-    console.log(event.target.value);
     setApplicationInfo({
       ...applicationInfo,
       selectedCollege: "",
@@ -55,7 +54,6 @@ const Transfer = (props) => {
   };
 
   const handleUniversityChange = (event) => {
-    console.log(event.target.value);
     setApplicationInfo({
       ...applicationInfo,
       selectedCollege: "",
@@ -78,7 +76,6 @@ const Transfer = (props) => {
     const relatedColleges = collegeInfo.filter(
       (college) => college.uniAddr === universityAddress
     );
-    console.log(relatedColleges);
 
     // updating the college list
     setCol(relatedColleges);
@@ -107,7 +104,6 @@ const Transfer = (props) => {
         clgInfo = college;
       }
     });
-    console.log(clgInfo);
     getCourses(clgInfo);
   };
 
@@ -122,8 +118,6 @@ const Transfer = (props) => {
         console.log(e);
       }
     });
-
-    console.log(courses);
   });
 
   const handleCourseChange = (event) => {
@@ -164,7 +158,6 @@ const Transfer = (props) => {
 
       try {
         const added = await client.add(selectedFile);
-        console.log(added);
         setApplicationInfo({
           ...applicationInfo,
           [event.target.name]: added.path,

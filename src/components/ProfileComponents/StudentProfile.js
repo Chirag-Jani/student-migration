@@ -4,16 +4,8 @@ import { Link } from "react-router-dom";
 
 const StudentProfile = (props) => {
   const { loggedInUserInfo } = props;
-  const {
-    addr,
-    batch,
-    clgAddr,
-    courseAddr,
-    transferApplications,
-    name,
-    regNo,
-    uniAddr,
-  } = loggedInUserInfo;
+  const { addr, batch, clgAddr, courseAddr, name, regNo, uniAddr } =
+    loggedInUserInfo;
 
   return (
     <Box
@@ -63,14 +55,14 @@ const StudentProfile = (props) => {
         <ListItem>
           <ListItemText primary={`University Address: ${uniAddr}`} />
         </ListItem>
-        <ListItem>
+        {/* <ListItem>
           <ListItemText
             primary="Transfer Applications:"
             secondary={
               transferApplications ? transferApplications.join(", ") : "None"
             }
           />
-        </ListItem>
+        </ListItem> */}
       </List>
     </Box>
   );

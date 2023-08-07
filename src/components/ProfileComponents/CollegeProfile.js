@@ -29,6 +29,7 @@ const CollegeProfile = (props) => {
   // for approving students
   // State for modal and inputs
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
   const [modalInput1, setModalInput1] = useState("");
   const [modalInput2, setModalInput2] = useState("");
   const [studentAddress, setStudentAddress] = useState("");
@@ -48,11 +49,6 @@ const CollegeProfile = (props) => {
 
   // Handle submit of modal inputs
   const handleModalSubmit = async () => {
-    // console.log("Cours ADr:", courseAddress);
-    // console.log("StudAddr:", studentAddress);
-    // console.log("REg no:", modalInput1);
-    // console.log("Bach NO:", modalInput2);
-
     try {
       const tx = await connectionInfo.contract.approve(
         courseAddress,
@@ -65,6 +61,21 @@ const CollegeProfile = (props) => {
       console.log(e);
     }
     setModalOpen(false);
+  };
+
+  const handleApplicationModalSubmit = async () => {
+    try {
+      const tx = await connectionInfo.contract.approveOrRejectApplication(
+        searchAddress,
+        true,
+        modalInput1,
+        modalInput2
+      );
+      console.log(tx);
+    } catch (e) {
+      console.log(e);
+    }
+    setIsApplicationModalOpen(false);
   };
 
   const handleAddressClick = (address) => {
@@ -136,10 +147,8 @@ const CollegeProfile = (props) => {
         fromCourseAddress,
         marksheetCID,
         migrationCertiCID,
-        transferType,
         nocCID,
         notes,
-        status,
         studentAddr,
         toAddr,
         toCourseAddress,
@@ -420,7 +429,6 @@ const CollegeProfile = (props) => {
                   {searchedData.transferApplications?.map((appAddr, index) => (
                     <ListItem
                       key={index}
-                      button
                       onClick={() => handleAddressClick(appAddr)}
                     >
                       <ListItemText primary={appAddr} />
@@ -563,11 +571,12 @@ const CollegeProfile = (props) => {
               </Grid>
               <Grid item xs={12}>
                 <Button
+                  onClick={() => {
+                    setIsApplicationModalOpen(true);
+                  }}
                   variant="contained"
                   color="success"
-                  sx={{
-                    margin: "0 10px 0 0",
-                  }}
+                  style={{ margin: "0 10px 0 0" }}
                 >
                   Accept
                 </Button>
@@ -577,10 +586,66 @@ const CollegeProfile = (props) => {
                   sx={{
                     margin: "0 0 0 10px",
                   }}
+                  onClick={async () => {
+                    try {
+                      const tx =
+                        await connectionInfo.contract.approveOrRejectApplication(
+                          searchAddress,
+                          false,
+                          "N/A",
+                          "N/A"
+                        );
+                      console.log(tx);
+                    } catch (e) {
+                      console.log(e);
+                    }
+                  }}
                 >
                   Reject
                 </Button>
               </Grid>
+
+              {/* Modal */}
+              <Dialog
+                open={isApplicationModalOpen}
+                onClose={() => {
+                  setIsApplicationModalOpen(false);
+                }}
+              >
+                <DialogTitle>Approve Student Application</DialogTitle>
+                <DialogContent>
+                  <TextField
+                    label="Assigned Registration Number"
+                    value={modalInput1}
+                    onChange={(e) => setModalInput1(e.target.value)}
+                    fullWidth
+                    margin="normal"
+                  />
+                  <TextField
+                    label="Assigned Batch Number"
+                    value={modalInput2}
+                    onChange={(e) => setModalInput2(e.target.value)}
+                    fullWidth
+                    margin="normal"
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    onClick={handleModalClose}
+                    variant="outlined"
+                    color="primary"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleApplicationModalSubmit}
+                    variant="outlined"
+                    color="primary"
+                  >
+                    Submit
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </Grid>
           )}
         </div>

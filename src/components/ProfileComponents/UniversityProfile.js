@@ -105,10 +105,8 @@ const UniversityProfile = (props) => {
         fromCourseAddress,
         marksheetCID,
         migrationCertiCID,
-        transferType,
         nocCID,
         notes,
-        status,
         studentAddr,
         toAddr,
         toCourseAddress,
@@ -140,6 +138,7 @@ const UniversityProfile = (props) => {
       const tx = await connectionInfo.contract.transferApplicationToCollege(
         searchAddress
       );
+      console.log(tx);
       alert("Application moved to College.");
     } catch (e) {
       console.log(e);

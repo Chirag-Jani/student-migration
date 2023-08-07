@@ -11,8 +11,6 @@ const Profile = (props) => {
   const [userType, setUserType] = useState();
 
   useEffect(() => {
-    console.log(props);
-
     const getUserType = async () => {
       const tx = await connectionInfo.contract.getUserType(
         connectionInfo.account

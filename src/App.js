@@ -44,7 +44,6 @@ function App() {
 
       // storing the array temp
       const tempUniAddr = uni;
-      console.log(tempUniAddr);
 
       // getting all the details (university wise)
       tempUniAddr.map(async (uni) => {
@@ -66,9 +65,7 @@ function App() {
         uniColleges: tx.colleges,
         uniApplications: tx.applications,
       };
-      console.log("University Detail: ", tempUniData);
       setUniversities((prevUniversities) => [...prevUniversities, tempUniData]);
-      console.log("Getting cOllege details:");
     } catch (e) {
       console.log(e);
     }
@@ -81,7 +78,6 @@ function App() {
         let collegeDetails = await connectionInfo.contract.getCollegeInfo(col);
         setCollegeInfo((prevColleges) => [...prevColleges, collegeDetails]);
         console.log(collegeDetails);
-        console.log(collegeInfo);
       });
     });
     try {
@@ -125,7 +121,7 @@ function App() {
           account,
         });
       } catch (e) {
-        console.log(e.message);
+        console.log(e);
       }
     };
 
