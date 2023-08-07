@@ -368,7 +368,7 @@
       },
       {
         "internalType": "bytes32[]",
-        "name": "migrationApplications",
+        "name": "transferApplications",
         "type": "bytes32[]"
       }
     ],

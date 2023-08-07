@@ -148,106 +148,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "enum DataContract.MigrationType",
-        "name": "migrationType",
-        "type": "uint8"
-      },
-      {
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "fromCourse",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "toCourse",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "noc",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "transferCerti",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "marksheet",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "migrationCerti",
-        "type": "string"
-      }
-    ],
-    "name": "initiateTransfer",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "applicationId",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "studentName",
-        "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "courseAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "collegeAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "universityAddress",
-        "type": "address"
-      }
-    ],
-    "name": "signup",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "applicationId",
-        "type": "bytes32"
-      }
-    ],
-    "name": "transferApplicationToCollege",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "getAllUniversities",
     "outputs": [
@@ -281,8 +181,8 @@
         "type": "address"
       },
       {
-        "internalType": "enum DataContract.MigrationType",
-        "name": "migrationType",
+        "internalType": "enum DataContract.TransferType",
+        "name": "transferType",
         "type": "uint8"
       },
       {
@@ -616,7 +516,7 @@
       },
       {
         "internalType": "bytes32[]",
-        "name": "migrationApplications",
+        "name": "transferApplications",
         "type": "bytes32[]"
       }
     ],
@@ -722,6 +622,106 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "enum DataContract.TransferType",
+        "name": "transferType",
+        "type": "uint8"
+      },
+      {
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "fromCourse",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "toCourse",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "noc",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "transferCerti",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "marksheet",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "migrationCerti",
+        "type": "string"
+      }
+    ],
+    "name": "initiateTransfer",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "applicationId",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "studentName",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "courseAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "collegeAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "universityAddress",
+        "type": "address"
+      }
+    ],
+    "name": "signup",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "applicationId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "transferApplicationToCollege",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

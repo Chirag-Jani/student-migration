@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-// Replace the word "Migration" to "Transfer"
-
 contract DataContract {
     address admin;
 
@@ -41,7 +39,7 @@ contract DataContract {
         address uniAddr; // university address
         string regNo; // registration number
         string batch; // batch id
-        bytes32[] migrationApplications; // transferApplications
+        bytes32[] transferApplications; // transferApplications
     }
 
     enum Coursetype {
@@ -59,7 +57,7 @@ contract DataContract {
     struct Application {
         bytes32 applicationId; // generate randomely
         address studentAddr;
-        MigrationType migrationType;
+        TransferType transferType;
         // fromCourseAddress and toCourseAddress types needs to be the same
         address fromAddr;
         address toAddr;
@@ -74,7 +72,7 @@ contract DataContract {
         string notes;
     }
 
-    enum MigrationType {
+    enum TransferType {
         COLLEGE_TO_COLLEGE_SAME_UNIVERSITY,
         COLLEGE_TO_COLLEGE_DIFFERENT_UNIVERSITY
     }
@@ -111,10 +109,10 @@ contract DataContract {
     // courseExistUnderUniversity & courseExistUnderCollege are not needed, I will handle it from frontend
 
     // university => course => courseExist or not
-    // mapping(address => mapping(address => bool)) courseExistUnderUniversity;
+    mapping(address => mapping(address => bool)) courseExistUnderUniversity;
 
     // // college => course => courseExist or not
-    // mapping(address => mapping(address => bool)) courseExistUnderCollege;
+    mapping(address => mapping(address => bool)) courseExistUnderCollege;
 
     constructor() {
         admin = msg.sender;
@@ -179,13 +177,12 @@ contract DataContract {
         address universityAddress,
         uint seats
     ) public {
-        // checks not needed, will handle from frontend
-        // require(
-        //     msg.sender == admin ||
-        //         msg.sender == universityAddress ||
-        //         msg.sender == collegeAddress,
-        //     "Unauthorized"
-        // );
+        require(
+            msg.sender == admin ||
+                msg.sender == universityAddress ||
+                msg.sender == collegeAddress,
+            "Unauthorized"
+        );
 
         // should not repeat the address
         require(userExist[courseAddress] == false, "Course Exist");
@@ -214,8 +211,8 @@ contract DataContract {
         getCourse[courseAddress] = course;
 
         // adding course under college and university
-        // courseExistUnderUniversity[universityAddress][courseAddress] = true;
-        // courseExistUnderCollege[collegeAddress][courseAddress] = true;
+        courseExistUnderUniversity[universityAddress][courseAddress] = true;
+        courseExistUnderCollege[collegeAddress][courseAddress] = true;
     }
 
     // adding colleges can be done by admin or university only
@@ -224,11 +221,10 @@ contract DataContract {
         string memory collegeName,
         address universityAddress
     ) public {
-        // checks not needed, will handle from frontend
-        // require(
-        //     msg.sender == admin || msg.sender == universityAddress,
-        //     "Unauthorized"
-        // );
+        require(
+            msg.sender == admin || msg.sender == universityAddress,
+            "Unauthorized"
+        );
 
         // should not repeat the address
         require(userExist[collegeAddress] == false, "User Exist");
@@ -327,12 +323,12 @@ contract DataContract {
         College memory clg = getCollege[clgAddr];
 
         // itself, or its parent university, or admin can see
-        // require(
-        //     msg.sender == clgAddr ||
-        //         msg.sender == clg.uniAddr ||
-        //         msg.sender == admin,
-        //     "Access Denied!"
-        // );
+        require(
+            msg.sender == clgAddr ||
+                msg.sender == clg.uniAddr ||
+                msg.sender == admin,
+            "Access Denied!"
+        );
 
         return (
             clg.addr,
@@ -361,12 +357,12 @@ contract DataContract {
         )
     {
         Course memory cour = getCourse[courseAddr];
-        // require(
-        //     msg.sender == cour.clgAddr ||
-        //         msg.sender == cour.uniAddr ||
-        //         msg.sender == admin,
-        //     "Access Denied!"
-        // );
+        require(
+            msg.sender == cour.clgAddr ||
+                msg.sender == cour.uniAddr ||
+                msg.sender == admin,
+            "Access Denied!"
+        );
         return (
             cour.addr,
             cour.totalSeats,
@@ -393,17 +389,17 @@ contract DataContract {
             address uniAddr,
             string memory regNo,
             string memory batch,
-            bytes32[] memory migrationApplications
+            bytes32[] memory transferApplications
         )
     {
         Student memory stud = getStudent[studAddr];
-        // require(
-        //     msg.sender == studAddr ||
-        //         msg.sender == stud.clgAddr ||
-        //         msg.sender == stud.uniAddr ||
-        //         msg.sender == admin,
-        //     "Access Denied!"
-        // );
+        require(
+            msg.sender == studAddr ||
+                msg.sender == stud.clgAddr ||
+                msg.sender == stud.uniAddr ||
+                msg.sender == admin,
+            "Access Denied!"
+        );
         return (
             stud.addr,
             stud.name,
@@ -412,7 +408,7 @@ contract DataContract {
             stud.uniAddr,
             stud.regNo,
             stud.batch,
-            stud.migrationApplications
+            stud.transferApplications
         );
     }
 }

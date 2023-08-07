@@ -9,7 +9,7 @@ const StudentProfile = (props) => {
     batch,
     clgAddr,
     courseAddr,
-    migrationApplications,
+    transferApplications,
     name,
     regNo,
     uniAddr,
@@ -65,9 +65,9 @@ const StudentProfile = (props) => {
         </ListItem>
         <ListItem>
           <ListItemText
-            primary="Migration Applications:"
+            primary="Transfer Applications:"
             secondary={
-              migrationApplications ? migrationApplications.join(", ") : "None"
+              transferApplications ? transferApplications.join(", ") : "None"
             }
           />
         </ListItem>

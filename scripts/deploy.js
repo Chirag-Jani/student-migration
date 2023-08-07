@@ -10,15 +10,15 @@ async function main(contractName) {
   );
 }
 
-main("StudentRegistration").catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+// main("StudentRegistration").catch((error) => {
+//   console.error(error);
+//   process.exitCode = 1;
+// });
 
-main("DataContract").catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+// main("DataContract").catch((error) => {
+//   console.error(error);
+//   process.exitCode = 1;
+// });
 
 // main("ApplicationContract").catch((error) => {
 //   console.error(error);

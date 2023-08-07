@@ -112,7 +112,7 @@ const CollegeProfile = (props) => {
         uniAddr,
         regNo,
         batch,
-        migrationApplications,
+        transferApplications,
       } = tx;
 
       foundData = {
@@ -123,7 +123,44 @@ const CollegeProfile = (props) => {
         uniAddr,
         regNo,
         batch,
-        migrationApplications,
+        transferApplications,
+      };
+    } else {
+      tx = await connectionInfo.contract.getApplication(searchAddress);
+      console.log(tx);
+
+      const {
+        applicationId,
+        deadline,
+        fromAddr,
+        fromCourseAddress,
+        marksheetCID,
+        migrationCertiCID,
+        transferType,
+        nocCID,
+        notes,
+        status,
+        studentAddr,
+        toAddr,
+        toCourseAddress,
+        transferCertiCID,
+      } = tx;
+
+      foundData = {
+        applicationId,
+        studentAddr,
+        deadline,
+        fromAddr,
+        fromCourseAddress,
+        marksheetCID,
+        migrationCertiCID,
+        transferCertiCID,
+        nocCID,
+        // transferType: ethers.BigNumber.from(tx.transferType._hex).toNumber(),
+        // status: ethers.BigNumber.from(tx.status._hex).toNumber(),
+        toAddr,
+        toCourseAddress,
+        notes,
       };
     }
     setSearchedData(foundData);
@@ -186,6 +223,7 @@ const CollegeProfile = (props) => {
           >
             <MenuItem value="Course">Course</MenuItem>
             <MenuItem value="Student">Student</MenuItem>
+            <MenuItem value="Application">Application</MenuItem>
           </Select>
         </FormControl>
         <TextField
@@ -376,10 +414,10 @@ const CollegeProfile = (props) => {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subtitle1" component="div">
-                  Migration Applications:
+                  Transfer Applications:
                 </Typography>
                 <List>
-                  {searchedData.migrationApplications?.map((appAddr, index) => (
+                  {searchedData.transferApplications?.map((appAddr, index) => (
                     <ListItem
                       key={index}
                       button
@@ -389,6 +427,159 @@ const CollegeProfile = (props) => {
                     </ListItem>
                   ))}
                 </List>
+              </Grid>
+            </Grid>
+          )}
+          {searchType === "Application" && (
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Typography variant="subtitle1" component="div">
+                  Application ID: {searchedData.applicationId}
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography variant="subtitle1" component="div">
+                  Student Address: {searchedData.studentAddr}
+                </Typography>
+              </Grid>
+              {/* <Grid item xs={12}>
+                <Typography variant="subtitle1" component="div">
+                  Deadline: {searchedData.deadline}
+                </Typography>
+              </Grid> */}
+              <Grid item xs={12}>
+                <Typography variant="subtitle1" component="div">
+                  From College Address: {searchedData.fromAddr}
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography variant="subtitle1" component="div">
+                  From Course Address: {searchedData.fromCourseAddress}
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <a
+                  href={`https://ipfs.io/ipfs/${searchedData.marksheetCID}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Typography variant="subtitle1" component="div">
+                    Marksheet:
+                  </Typography>
+                </a>
+
+                <object
+                  data={`https://ipfs.io/ipfs/${searchedData.marksheetCID}`}
+                  style={{
+                    width: "500px",
+                    height: "fit-content",
+                  }}
+                >
+                  Document Not Found
+                </object>
+              </Grid>
+              <Grid item xs={12}>
+                <a
+                  href={`https://ipfs.io/ipfs/${searchedData.migrationCertiCID}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Typography variant="subtitle1" component="div">
+                    Migration Certificate:
+                  </Typography>
+                </a>
+                <object
+                  data={`https://ipfs.io/ipfs/${searchedData.migrationCertiCID}`}
+                  alt="Not Found"
+                  style={{
+                    width: "500px",
+                    height: "fit-content",
+                  }}
+                >
+                  Document Not Found
+                </object>
+              </Grid>
+              <Grid item xs={12}>
+                <a
+                  href={`https://ipfs.io/ipfs/${searchedData.transferCertiCID}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Typography variant="subtitle1" component="div">
+                    Transfer Certificate:
+                  </Typography>
+                </a>
+                <object
+                  data={`https://ipfs.io/ipfs/${searchedData.transferCertiCID}`}
+                  alt="Not Found"
+                  style={{
+                    width: "500px",
+                    height: "fit-content",
+                  }}
+                >
+                  Document Not Found
+                </object>
+              </Grid>
+              <Grid item xs={12}>
+                <a
+                  href={`https://ipfs.io/ipfs/${searchedData.nocCID}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Typography variant="subtitle1" component="div">
+                    NOC:
+                  </Typography>
+                </a>
+                <object
+                  data={`https://ipfs.io/ipfs/${searchedData.nocCID}`}
+                  alt="Not Found"
+                  style={{
+                    width: "500px",
+                    height: "fit-content",
+                  }}
+                >
+                  Document Not Found
+                </object>
+              </Grid>
+              {/* <Grid item xs={6}>
+                <Typography variant="subtitle1" component="div">
+                  Transfer Type: {searchedData.transferType}
+                </Typography>
+              </Grid> */}
+              <Grid item xs={12}>
+                <Typography variant="subtitle1" component="div">
+                  To College: {searchedData.toAddr}
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography variant="subtitle1" component="div">
+                  To Course Address: {searchedData.toCourseAddress}
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography variant="subtitle1" component="div">
+                  Notes: {searchedData.notes}
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Button
+                  variant="contained"
+                  color="success"
+                  sx={{
+                    margin: "0 10px 0 0",
+                  }}
+                >
+                  Accept
+                </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  sx={{
+                    margin: "0 0 0 10px",
+                  }}
+                >
+                  Reject
+                </Button>
               </Grid>
             </Grid>
           )}

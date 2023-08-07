@@ -374,7 +374,7 @@ const Transfer = (props) => {
               <Input
                 type="file"
                 inputProps={{
-                  accept: ".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.txt",
+                  accept: ".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.txt,.webp",
                 }}
                 name="nocCID"
                 onChange={handleFileChange}
@@ -407,7 +407,7 @@ const Transfer = (props) => {
               <Input
                 type="file"
                 inputProps={{
-                  accept: ".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.txt",
+                  accept: ".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.txt,.webp",
                 }}
                 name="transferCertiCID"
                 onChange={handleFileChange}
@@ -444,7 +444,7 @@ const Transfer = (props) => {
               <Input
                 type="file"
                 inputProps={{
-                  accept: ".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.txt",
+                  accept: ".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.txt,.webp",
                 }}
                 name="marksheetCID"
                 onChange={handleFileChange}
@@ -477,7 +477,7 @@ const Transfer = (props) => {
               <Input
                 type="file"
                 inputProps={{
-                  accept: ".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.txt",
+                  accept: ".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.txt,.webp",
                 }}
                 name="migrationCertiCID"
                 onChange={handleFileChange}

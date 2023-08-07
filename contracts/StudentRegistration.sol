@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
-import "contracts/DefaultData.sol";
+import "./DefaultData.sol";
 
 contract StudentRegistration is DataContract {
     // student calls this function to signup
@@ -33,7 +33,7 @@ contract StudentRegistration is DataContract {
         Course storage course = getCourse[courseAddress];
 
         // availibility of seats - no check needed (handle from frontend)
-        // require(course.availableSeats > 0, "Seats Unavailable");
+        require(course.availableSeats > 0, "Seats Unavailable");
 
         Student memory stud = Student(
             msg.sender,
