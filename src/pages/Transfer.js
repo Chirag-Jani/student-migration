@@ -458,43 +458,45 @@ const Transfer = (props) => {
               )} */}
             </>
           )}
-          {applicationInfo.marksheetCID && (
-            <>
-              <InputLabel
-                sx={{
-                  margin: "10px",
-                }}
-              >
-                Upload Migration Certificate:
-              </InputLabel>
-              <Input
-                type="file"
-                inputProps={{
-                  accept: ".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.txt,.webp",
-                }}
-                name="migrationCertiCID"
-                onChange={handleFileChange}
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                name="migrationCertiCID"
-                onClick={handleUpload}
-                sx={{
-                  display: `${
-                    applicationInfo.migrationCertiCID !== "" && "none"
-                  }`,
-                }}
-              >
-                Upload
-              </Button>
-              {/* {applicationInfo.migrationCertiCID && (
+          {/* only when different university */}
+          {applicationInfo.marksheetCID &&
+            applicationInfo.transferType === 1 && (
+              <>
+                <InputLabel
+                  sx={{
+                    margin: "10px",
+                  }}
+                >
+                  Upload Migration Certificate:
+                </InputLabel>
+                <Input
+                  type="file"
+                  inputProps={{
+                    accept: ".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.txt,.webp",
+                  }}
+                  name="migrationCertiCID"
+                  onChange={handleFileChange}
+                />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  name="migrationCertiCID"
+                  onClick={handleUpload}
+                  sx={{
+                    display: `${
+                      applicationInfo.migrationCertiCID !== "" && "none"
+                    }`,
+                  }}
+                >
+                  Upload
+                </Button>
+                {/* {applicationInfo.migrationCertiCID && (
                 <p>
                   Migration Certificate CID: {applicationInfo.migrationCertiCID}
                 </p>
               )} */}
-            </>
-          )}
+              </>
+            )}
 
           {applicationInfo.migrationCertiCID && (
             <Button
