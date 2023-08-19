@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
-import "./StudentRegistration.sol";
+import "contracts/StudentRegistration.sol";
 
 contract ApplicationContract is StudentRegistration {
     // mapping to get application from id
@@ -118,6 +118,11 @@ contract ApplicationContract is StudentRegistration {
             Course storage fromCourse = getCourse[
                 application.fromCourseAddress
             ];
+
+            // from college to add in the application list
+            College storage fromCollege = getCollege[application.fromAddr];
+
+            fromCollege.applications.push(applicationId);
 
             for (uint256 i = 0; i < fromCourse.enrolledStudents.length; i++) {
                 if (fromCourse.enrolledStudents[i] == application.studentAddr) {
