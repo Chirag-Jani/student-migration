@@ -323,12 +323,12 @@ contract DataContract {
         College memory clg = getCollege[clgAddr];
 
         // itself, or its parent university, or admin can see
-        require(
-            msg.sender == clgAddr ||
-                msg.sender == clg.uniAddr ||
-                msg.sender == admin,
-            "Access Denied!"
-        );
+        // require(
+        //     msg.sender == clgAddr ||
+        //         msg.sender == clg.uniAddr ||
+        //         msg.sender == admin,
+        //     "Access Denied!"
+        // );
 
         return (
             clg.addr,
@@ -357,12 +357,12 @@ contract DataContract {
         )
     {
         Course memory cour = getCourse[courseAddr];
-        require(
-            msg.sender == cour.clgAddr ||
-                msg.sender == cour.uniAddr ||
-                msg.sender == admin,
-            "Access Denied!"
-        );
+        // require(
+        //     msg.sender == cour.clgAddr ||
+        //         msg.sender == cour.uniAddr ||
+        //         msg.sender == admin,
+        //     "Access Denied!"
+        // );
         return (
             cour.addr,
             cour.totalSeats,
@@ -393,13 +393,13 @@ contract DataContract {
         )
     {
         Student memory stud = getStudent[studAddr];
-        require(
-            msg.sender == studAddr ||
-                msg.sender == stud.clgAddr ||
-                msg.sender == stud.uniAddr ||
-                msg.sender == admin,
-            "Access Denied!"
-        );
+        // require(
+        //     msg.sender == studAddr ||
+        //         msg.sender == stud.clgAddr ||
+        //         msg.sender == stud.uniAddr ||
+        //         msg.sender == admin,
+        //     "Access Denied!"
+        // );
         return (
             stud.addr,
             stud.name,
