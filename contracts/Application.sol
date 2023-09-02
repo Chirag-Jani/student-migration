@@ -120,9 +120,9 @@ contract ApplicationContract is StudentRegistration {
             ];
 
             // from college to add in the application list
-            College storage fromCollege = getCollege[application.fromAddr];
-
-            fromCollege.applications.push(applicationId);
+            College memory fromCollege = getCollege[application.fromAddr];
+            University storage fromUni = getUniversity[fromCollege.uniAddr];
+            fromUni.applications.push(applicationId);
 
             for (uint256 i = 0; i < fromCourse.enrolledStudents.length; i++) {
                 if (fromCourse.enrolledStudents[i] == application.studentAddr) {

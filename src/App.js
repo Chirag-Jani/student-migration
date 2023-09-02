@@ -152,11 +152,18 @@ function App() {
             setLoggedInUserInfo={setLoggedInUserInfo}
           />
           {/* temp buttons to get info */}
-          <Button onClick={getUniversities} color="error" variant="contained">
-            Get Uni
+          <Button
+            onClick={getUniversities}
+            color="error"
+            variant="contained"
+            sx={{
+              margin: "10px",
+            }}
+          >
+            Get Updated Universities
           </Button>
           <Button onClick={getCollegeDetails} color="error" variant="contained">
-            Get Clg
+            Get Updated Colleges
           </Button>
           {/* temp buttons ends */}
           <Routes>
