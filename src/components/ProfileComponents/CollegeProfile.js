@@ -17,7 +17,6 @@ import {
 } from "@mui/material";
 import { ethers } from "ethers";
 import React, { useState } from "react";
-import Certificate from "../Certificate";
 
 const CollegeProfile = (props) => {
   const { loggedInUserInfo, connectionInfo } = props;
@@ -613,14 +612,14 @@ const CollegeProfile = (props) => {
                 </Grid>
               )}
 
-              {searchedData.notes === "Congratulations!!" && (
+              {/* {searchedData.notes === "Congratulations!!" && (
                 <>
                   <Certificate
                     searchedData={searchedData}
                     connectionInfo={connectionInfo}
                   />
                 </>
-              )}
+              )} */}
 
               {/* Modal */}
               <Dialog

@@ -6,6 +6,7 @@ import {
   Select,
   Button,
   Input,
+  Typography,
 } from "@mui/material";
 import { create } from "ipfs-http-client";
 import { Buffer } from "buffer";
@@ -34,6 +35,9 @@ const Transfer = (props) => {
 
   // temporary fild holding
   const [selectedFile, setSelectedFile] = useState(null);
+
+  // available seates in selected course
+  const [availableSeates, setAvailableSeates] = useState(0);
 
   const handleTransferTypeChange = (event) => {
     setApplicationInfo({
@@ -120,7 +124,16 @@ const Transfer = (props) => {
     });
   });
 
-  const handleCourseChange = (event) => {
+  const handleCourseChange = async (event) => {
+    console.log(event);
+    try {
+      const tx = await connectionInfo.contract.getCourseInfo(
+        event.target.value
+      );
+      setAvailableSeates(Number(tx.availableSeats));
+    } catch (e) {
+      console.log(e);
+    }
     setApplicationInfo({
       ...applicationInfo,
       nocCID: "",
@@ -355,6 +368,7 @@ const Transfer = (props) => {
               ))}
             </Select>
           </FormControl>
+          <Typography>Seat Available: {availableSeates}</Typography>
           {applicationInfo.selectedCourse && (
             <>
               <InputLabel
@@ -498,18 +512,18 @@ const Transfer = (props) => {
               </>
             )}
 
-          {applicationInfo.migrationCertiCID && (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleInitiateTransfer}
-              sx={{
-                margin: "20px 0",
-              }}
-            >
-              Initiate Transfer
-            </Button>
-          )}
+          {/* {applicationInfo.migrationCertiCID && ( */}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleInitiateTransfer}
+            sx={{
+              margin: "20px 0",
+            }}
+          >
+            Initiate Transfer
+          </Button>
+          {/* )} */}
         </div>
       )}
     </div>

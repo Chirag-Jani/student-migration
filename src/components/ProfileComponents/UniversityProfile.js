@@ -14,6 +14,8 @@ import {
 } from "@mui/material";
 import { ethers } from "ethers";
 
+import Certificate from "../Certificate";
+
 const UniversityProfile = (props) => {
   const { loggedInUserInfo, connectionInfo } = props;
   const { addr, applications, colleges, uniName } = loggedInUserInfo;
@@ -406,140 +408,153 @@ const UniversityProfile = (props) => {
           )}
           {searchType === "Application" && (
             <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Typography variant="subtitle1" component="div">
-                  Application ID: {searchedData.applicationId}
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant="subtitle1" component="div">
-                  Student Address: {searchedData.studentAddr}
-                </Typography>
-              </Grid>
-              {/* <Grid item xs={12}>
+              {searchedData.notes !== "Congratulations!!" && (
+                <>
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1" component="div">
+                      Application ID: {searchedData.applicationId}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1" component="div">
+                      Student Address: {searchedData.studentAddr}
+                    </Typography>
+                  </Grid>
+                  {/* <Grid item xs={12}>
                 <Typography variant="subtitle1" component="div">
                   Deadline: {searchedData.deadline}
                 </Typography>
               </Grid> */}
-              <Grid item xs={12}>
-                <Typography variant="subtitle1" component="div">
-                  From College Address: {searchedData.fromAddr}
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant="subtitle1" component="div">
-                  From Course Address: {searchedData.fromCourseAddress}
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <a
-                  href={`https://ipfs.io/ipfs/${searchedData.marksheetCID}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Typography variant="subtitle1" component="div">
-                    Marksheet:
-                  </Typography>
-                </a>
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1" component="div">
+                      From College Address: {searchedData.fromAddr}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1" component="div">
+                      From Course Address: {searchedData.fromCourseAddress}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <a
+                      href={`https://ipfs.io/ipfs/${searchedData.marksheetCID}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <Typography variant="subtitle1" component="div">
+                        Marksheet:
+                      </Typography>
+                    </a>
 
-                <object
-                  data={`https://ipfs.io/ipfs/${searchedData.marksheetCID}`}
-                  style={{
-                    width: "500px",
-                    height: "fit-content",
-                  }}
-                >
-                  Document Not Found
-                </object>
-              </Grid>
-              <Grid item xs={12}>
-                <a
-                  href={`https://ipfs.io/ipfs/${searchedData.migrationCertiCID}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Typography variant="subtitle1" component="div">
-                    Migration Certificate:
-                  </Typography>
-                </a>
-                <object
-                  data={`https://ipfs.io/ipfs/${searchedData.migrationCertiCID}`}
-                  alt="Not Found"
-                  style={{
-                    width: "500px",
-                    height: "fit-content",
-                  }}
-                >
-                  Document Not Found
-                </object>
-              </Grid>
-              <Grid item xs={12}>
-                <a
-                  href={`https://ipfs.io/ipfs/${searchedData.transferCertiCID}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Typography variant="subtitle1" component="div">
-                    Transfer Certificate:
-                  </Typography>
-                </a>
-                <object
-                  data={`https://ipfs.io/ipfs/${searchedData.transferCertiCID}`}
-                  alt="Not Found"
-                  style={{
-                    width: "500px",
-                    height: "fit-content",
-                  }}
-                >
-                  Document Not Found
-                </object>
-              </Grid>
-              <Grid item xs={12}>
-                <a
-                  href={`https://ipfs.io/ipfs/${searchedData.nocCID}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Typography variant="subtitle1" component="div">
-                    NOC:
-                  </Typography>
-                </a>
-                <object
-                  data={`https://ipfs.io/ipfs/${searchedData.nocCID}`}
-                  alt="Not Found"
-                  style={{
-                    width: "500px",
-                    height: "fit-content",
-                  }}
-                >
-                  Document Not Found
-                </object>
-              </Grid>
-              {/* <Grid item xs={6}>
+                    <object
+                      data={`https://ipfs.io/ipfs/${searchedData.marksheetCID}`}
+                      style={{
+                        width: "500px",
+                        height: "fit-content",
+                      }}
+                    >
+                      Document Not Found
+                    </object>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <a
+                      href={`https://ipfs.io/ipfs/${searchedData.migrationCertiCID}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <Typography variant="subtitle1" component="div">
+                        Migration Certificate:
+                      </Typography>
+                    </a>
+                    <object
+                      data={`https://ipfs.io/ipfs/${searchedData.migrationCertiCID}`}
+                      alt="Not Found"
+                      style={{
+                        width: "500px",
+                        height: "fit-content",
+                      }}
+                    >
+                      Document Not Found
+                    </object>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <a
+                      href={`https://ipfs.io/ipfs/${searchedData.transferCertiCID}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <Typography variant="subtitle1" component="div">
+                        Transfer Certificate:
+                      </Typography>
+                    </a>
+                    <object
+                      data={`https://ipfs.io/ipfs/${searchedData.transferCertiCID}`}
+                      alt="Not Found"
+                      style={{
+                        width: "500px",
+                        height: "fit-content",
+                      }}
+                    >
+                      Document Not Found
+                    </object>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <a
+                      href={`https://ipfs.io/ipfs/${searchedData.nocCID}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <Typography variant="subtitle1" component="div">
+                        NOC:
+                      </Typography>
+                    </a>
+                    <object
+                      data={`https://ipfs.io/ipfs/${searchedData.nocCID}`}
+                      alt="Not Found"
+                      style={{
+                        width: "500px",
+                        height: "fit-content",
+                      }}
+                    >
+                      Document Not Found
+                    </object>
+                  </Grid>
+                  {/* <Grid item xs={6}>
                 <Typography variant="subtitle1" component="div">
                   Transfer Type: {searchedData.transferType}
                 </Typography>
               </Grid> */}
-              <Grid item xs={12}>
-                <Typography variant="subtitle1" component="div">
-                  To College: {searchedData.toAddr}
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant="subtitle1" component="div">
-                  To Course Address: {searchedData.toCourseAddress}
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant="subtitle1" component="div">
-                  Notes: {searchedData.notes}
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Button variant="contained" onClick={moveToCollege}>
-                  Move to College
-                </Button>
-              </Grid>
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1" component="div">
+                      To College: {searchedData.toAddr}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1" component="div">
+                      To Course Address: {searchedData.toCourseAddress}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1" component="div">
+                      Notes: {searchedData.notes}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Button variant="contained" onClick={moveToCollege}>
+                      Move to College
+                    </Button>
+                  </Grid>
+                </>
+              )}
+
+              {searchedData.notes === "Congratulations!!" && (
+                <>
+                  <Certificate
+                    searchedData={searchedData}
+                    connectionInfo={connectionInfo}
+                  />
+                </>
+              )}
             </Grid>
           )}
         </div>
