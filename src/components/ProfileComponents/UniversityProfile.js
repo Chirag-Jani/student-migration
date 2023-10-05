@@ -549,10 +549,11 @@ const UniversityProfile = (props) => {
 
               {searchedData.notes === "Congratulations!!" && (
                 <>
-                  <Certificate
+                  {/* <Certificate
                     searchedData={searchedData}
                     connectionInfo={connectionInfo}
-                  />
+                  /> */}
+                  <h1>Get your Transfer Certificate from College!</h1>
                 </>
               )}
             </Grid>
